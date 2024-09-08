@@ -1,0 +1,86 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Auth\Access\HandlesAuthorization;
+use {{ namespacedModel }};
+use {{ namespacedUserModel }};
+
+class {{ class }}
+{
+    use HandlesAuthorization;
+
+    public function viewAny({{ user }} $user): bool
+    {
+        return $user->can('view_any_{{ modelVariable }}');
+    }
+
+    public function view({{ user }} $user, {{ model }} $model): bool
+    {
+        return $this->viewAny($user) || $this->viewSpecific($user, $model);
+    }
+
+    public function viewSpecific({{ user }} $user, {{ model }} $model): bool
+    {
+        if ($user->can('view_{{ modelVariable }}')) {
+            return true;
+        }
+
+        return $user->can('view_own_{{ modelVariable }}') && $user->id === $model->id;
+    }
+
+    public function create({{ user }} $user): bool
+    {
+        return $user->can('create_{{ modelVariable }}');
+    }
+
+    public function update({{ user }} $user, {{ model }} $model): bool
+    {
+        return $this->updateAny($user, $model) || $this->updateOwn($user, $model);
+    }
+
+    public function updateAny({{ user }} $user, {{ model }} $model): bool
+    {
+        return $user->can('update_{{ modelVariable }}');
+    }
+
+    public function updateOwn({{ user }} $user, {{ model }} $model): bool
+    {
+        return $user->can('update_own_{{ modelVariable }}') && $user->id === $model->id;
+    }
+
+    public function delete({{ user }} $user, {{ model }} $model): bool
+    {
+        return $this->deleteAny($user) || $this->deleteSpecific($user, $model);
+    }
+
+    public function deleteAny({{ user }} $user): bool
+    {
+        return $user->can('delete_any_{{ modelVariable }}');
+    }
+
+    public function deleteSpecific({{ user }} $user, {{ model }} $model): bool
+    {
+        return $user->can('delete_{{ modelVariable }}');
+    }
+
+    public function restore({{ user }} $user, {{ model }} $model): bool
+    {
+        return $user->can('restore_{{ modelVariable }}');
+    }
+
+    public function restoreAny({{ user }} $user): bool
+    {
+        return $user->can('restore_any_{{ modelVariable }}');
+    }
+
+    public function forceDelete({{ user }} $user, {{ model }} $model): bool
+    {
+        return $user->can('force_delete_{{ modelVariable }}');
+    }
+
+    public function forceDeleteAny({{ user }} $user): bool
+    {
+        return $user->can('force_delete_any_{{ modelVariable }}');
+    }
+}

@@ -1,0 +1,33 @@
+<?php
+
+namespace {{ namespace }};
+
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use DevActif\FilamentToolkit\Traits\CanGetNamesStatically;
+use App\Models\Scopes\TenantScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+
+#[ScopedBy([TenantScope::class])]
+final class {{ class }} extends Model
+{
+    use CanGetNamesStatically;
+    use HasFactory;
+
+     //region SCOPES
+
+    //endregion
+
+    //region RELATIONS
+
+    //endregion
+
+    //region ATTRIBUTES
+
+    //endregion
+
+    //region FUNCTIONS
+
+    //endregion
+}

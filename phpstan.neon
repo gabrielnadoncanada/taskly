@@ -1,0 +1,21 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    checkOctaneCompatibility: true
+    paths:
+        - app/
+
+    # Level 9 is the highest level
+    level: 1
+
+    ignoreErrors:
+#        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::#'
+
+
+#        - '#PHPDoc tag @var#'
+#
+#    excludePaths:
+#        - ./*/*/FileToBeExcluded.php
+#
+#    checkMissingIterableValueType: false
