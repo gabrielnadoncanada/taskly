@@ -29,9 +29,9 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(User::FIRSTNAME)
+                Tables\Columns\TextColumn::make(User::FIRST_NAME)
                     ->searchable(),
-                Tables\Columns\TextColumn::make(User::LASTNAME)
+                Tables\Columns\TextColumn::make(User::LAST_NAME)
                     ->searchable(),
                 Tables\Columns\TextColumn::make(User::EMAIL)
                     ->searchable(),

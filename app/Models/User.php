@@ -9,6 +9,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,9 +25,9 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
 
     public const ID = 'id';
 
-    public const FIRSTNAME = 'firstname';
+    public const FIRST_NAME = 'first_name';
 
-    public const LASTNAME = 'lastname';
+    public const LAST_NAME = 'last_name';
 
     public const OFFICE_PHONE = 'office_phone';
 
@@ -35,6 +36,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
     public const LANGUAGE = 'language';
 
     public const PHONE = 'phone';
+    public const NAME = 'name';
 
     public const EMAIL = 'email';
 
@@ -61,7 +63,14 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
 
     public function getFilamentName(): string
     {
-        return "$this->firstname $this->lastname";
+        return "$this->first_name $this->last_name";
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->first_name.' '.$this->last_name
+        );
     }
 
     /**
@@ -91,6 +100,19 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
     }
     //endregion
 
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+            ->withTimestamps();
+    }
+
+    // Tâches où l'utilisateur doit entreprendre une action
+    public function actionTasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_action_user')
+            ->withPivot('action_required', 'scheduled_date')
+            ->withTimestamps();
+    }
     //region RELATIONS
 
     public function organizations(): BelongsToMany

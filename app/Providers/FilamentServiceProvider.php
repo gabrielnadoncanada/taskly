@@ -9,6 +9,7 @@ use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ForceDeleteAction as TableForceDeleteAction;
 use Filament\Tables\Actions\ReplicateAction as TableReplicateAction;
+use Filament\Tables\Actions\DetachAction as TableDetachAction;
 use Filament\Tables\Actions\RestoreAction as TableRestoreAction;
 use Filament\Tables\Actions\ViewAction as TableViewAction;
 use Filament\Tables\Columns\Column;
@@ -74,6 +75,11 @@ class FilamentServiceProvider extends ServiceProvider
         TableDeleteAction::configureUsing(function (TableDeleteAction $action) {
             $action->hiddenLabel();
             $action->tooltip('Archiver');
+        }, isImportant: true);
+
+        TableDetachAction::configureUsing(function (TableDetachAction $action) {
+            $action->hiddenLabel();
+            $action->tooltip('Détacher');
         }, isImportant: true);
 
         TableViewAction::configureUsing(function (TableViewAction $action) {

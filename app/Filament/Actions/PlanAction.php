@@ -2,7 +2,7 @@
 
 namespace App\Filament\Actions;
 
-use App\Enums\OrderStatus;
+use App\Enums\ProjectStatus;
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,9 +17,9 @@ class PlanAction extends Action
             ->color('info')
             ->url(function ($livewire, Model $record) {
 
-                if ($record->status === OrderStatus::NEW->value) {
+                if ($record->status === ProjectStatus::NEW->value) {
                     $record->update([
-                        'status' => OrderStatus::PROCESSING,
+                        'status' => ProjectStatus::PROCESSING,
                     ]);
                 }
 

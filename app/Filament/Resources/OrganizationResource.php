@@ -5,13 +5,11 @@ namespace App\Filament\Resources;
 use App\Enums\Currency;
 use App\Enums\MeasurementSystem;
 use App\Filament\AbstractResource;
+use App\Filament\Components\TimeStampSection;
 use App\Filament\Resources\OrganizationResource\Pages;
-use App\Filament\Resources\OrganizationResource\RelationManagers\AddressesRelationManager;
-use App\Filament\Resources\OrganizationResource\RelationManagers\UsersRelationManager;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\Organization;
-use App\Filament\Components\TimeStampSection;
 use Filament\Forms;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -133,8 +131,6 @@ class OrganizationResource extends AbstractResource
     public static function getRelations(): array
     {
         return [
-            UsersRelationManager::class,
-            AddressesRelationManager::class,
         ];
     }
 

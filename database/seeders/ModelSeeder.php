@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Models\CarrierSeeder;
-use Database\Seeders\Models\CustomerSeeder;
+use Database\Seeders\Models\CategorySeeder;
+use Database\Seeders\Models\ClientSeeder;
+use Database\Seeders\Models\ItemSeeder;
 use Database\Seeders\Models\OrganizationSeeder;
-use Database\Seeders\Models\ReceiptSeeder;
-use Database\Seeders\Models\ShipmentSeeder;
+use Database\Seeders\Models\ProjectSeeder;
+use Database\Seeders\Models\SupplierSeeder;
 use Database\Seeders\Models\UserSeeder;
-use Database\Seeders\Models\WarehouseSeeder;
 use Illuminate\Database\Seeder;
 
 class ModelSeeder extends Seeder
@@ -18,12 +18,11 @@ class ModelSeeder extends Seeder
         $this->call([
             OrganizationSeeder::class,
             UserSeeder::class,
-
-            CarrierSeeder::class,
-            WarehouseSeeder::class,
-            CustomerSeeder::class,
-            ReceiptSeeder::class,
-            ShipmentSeeder::class,
+            //            SupplierSeeder::class,
+            CategorySeeder::class,
+            ItemSeeder::class,
+            ClientSeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }

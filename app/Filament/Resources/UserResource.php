@@ -4,13 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Enums\Language;
 use App\Filament\AbstractResource;
+use App\Filament\Components\TimeStampSection;
 use App\Filament\Fields\PhoneInput;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use App\Filament\Components\TimeStampSection;
 use Filament\Forms;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -62,10 +62,10 @@ class UserResource extends AbstractResource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(User::FIRSTNAME)
+                Tables\Columns\TextColumn::make(User::FIRST_NAME)
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make(User::LASTNAME)
+                Tables\Columns\TextColumn::make(User::LAST_NAME)
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make(User::EMAIL)
@@ -111,9 +111,9 @@ class UserResource extends AbstractResource implements HasShieldPermissions
     public static function getFormFieldsSchema(): array
     {
         return [
-            Forms\Components\TextInput::make(User::FIRSTNAME)
+            Forms\Components\TextInput::make(User::FIRST_NAME)
                 ->required(),
-            Forms\Components\TextInput::make(User::LASTNAME)
+            Forms\Components\TextInput::make(User::LAST_NAME)
                 ->required(),
             Forms\Components\TextInput::make(User::EMAIL)
                 ->email()

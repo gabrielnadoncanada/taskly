@@ -2,44 +2,37 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\DimensionUnits;
-use App\Enums\ItemStatus;
-use App\Enums\WeightUnits;
 use App\Filament\AbstractResource;
+use App\Filament\Components\TimeStampSection;
 use App\Filament\Fields\DecimalInput;
 use App\Filament\Resources\ItemResource\Pages\CreateItem;
 use App\Filament\Resources\ItemResource\Pages\EditItem;
 use App\Filament\Resources\ItemResource\Pages\ListItems;
-use App\Filament\Resources\ReceiptResource\RelationManagers\PlanItemsRelationManager as PlanReceiptItemsRelationManager;
-use App\Filament\Resources\ShipmentResource\RelationManagers\PlanItemsRelationManager as PlanShipmentItemsRelationManager;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
-use App\Models\Customer;
+use App\Filament\Tables\Columns\EllipsisTextColumn;
+use App\Models\Category;
 use App\Models\Item;
-use App\Models\Localization;
-use App\Models\Receipt;
-use App\Models\Shipment;
-use App\Filament\Components\TimeStampSection;
-use Filament\Forms\Components\Fieldset;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemResource extends AbstractResource
@@ -50,11 +43,7 @@ class ItemResource extends AbstractResource
 
     protected static ?string $recordTitleAttribute = 'items';
 
-    protected static ?string $navigationGroup = 'Opération';
-
     protected static ?int $navigationSort = 6;
-
-    protected static string $customRecordTitleAttribute = 'display_item_number';
 
     protected static bool $shouldRegisterNavigation = true;
 
@@ -67,16 +56,52 @@ class ItemResource extends AbstractResource
                         Section::make()
                             ->columnSpan(1)
                             ->columns()
-                            ->schema(static::getFormSchema()),
-                        Section::make(__('filament.titles.additional_information'))
-                            ->columns()
-                            ->schema(static::getFormExtraSchema())
-                            ->columnSpan(1),
+                            ->schema([
+                                TextInput::make(Item::TITLE)->required()->columnSpanFull(),
+                                Textarea::make(Item::DESCRIPTION)->columnSpanFull(),
+                                DecimalInput::make(Item::DEFAULT_PRICE),
+                                TextInput::make(Item::SKU)
+                                    ->unique(Item::class, Item::SKU, ignoreRecord: true),
+                                TextInput::make(Item::WEIGHT)
+                                    ->numeric()
+                                    ->columnSpanFull()
+                                    ->suffix(fn () => Filament::getTenant() ? Filament::getTenant()->getMeasurementSystemSuffix() : 'kg'),
+                            ]),
+
+                        Section::make('Images')
+                            ->schema([
+                                FileUpload::make('media')
+                                    ->image()
+                                    ->multiple()
+                                    ->maxFiles(5)
+                                    ->hiddenLabel(),
+                            ])
+                            ->collapsible(),
+
                     ])
                     ->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
 
-                TimeStampSection::make()
-                    ->columnSpan(['lg' => 1]),
+                Group::make()
+                    ->schema([
+                        TimeStampSection::make(),
+                        Section::make('Associations')
+                            ->schema([
+
+                                Select::make(Item::CATEGORY_ID)
+                                    ->columnSpanFull()
+                                    ->searchable()
+                                    ->live()
+                                    ->preload()
+                                    ->editOptionForm(CategoryResource::getFormFieldsSchema())
+                                    ->createOptionForm(CategoryResource::getFormFieldsSchema())
+                                    ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
+                                    ->relationship(name: 'category', titleAttribute: Category::TITLE),
+
+                            ])
+                            ->columns(1)
+                            ->columnSpanFull(),
+
+                    ])->columnSpan(['lg' => 1]),
             ])
             ->columns(3);
 
@@ -87,10 +112,6 @@ class ItemResource extends AbstractResource
         return $table
             ->columns(static::getTableColumns())
             ->filters([
-                SelectFilter::make(Item::STATUS)
-                    ->default([ItemStatus::STORED->value])
-                    ->multiple()
-                    ->options(ItemStatus::class),
 
                 TrashedFilter::make(),
             ])
@@ -112,84 +133,41 @@ class ItemResource extends AbstractResource
     public static function getTableColumns(): array
     {
         return [
-            TextColumn::make(Item::DISPLAY_ITEM_NUMBER)
+            ImageColumn::make(Item::MEDIA),
+
+            TextColumn::make(Item::TITLE)
+                ->tooltip(fn ($record): string => $record->description ?? '')
+                ->searchable(),
+            EllipsisTextColumn::make(Item::SKU)
+                ->searchable(),
+            TextColumn::make(Item::DEFAULT_PRICE)
+                ->searchable()
+                ->sortable()
+                ->formatStateUsing(fn (Item $record) => $record->{Item::DEFAULT_PRICE}.' '.($record->organization ? $record->organization->getCurrencySymbol() : '$')),
+
+            TextColumn::make('category.title')
+                ->searchable()
+                ->sortable()
+                ->badge()
+                ->color(fn (Item $record) => Color::hex($record->category->color)),
+            TextColumn::make('suppliers.title')
+                ->badge()
                 ->searchable(),
 
-            TextColumn::make(Item::DESCRIPTION)
-                ->searchable(),
-            TextColumn::make(Item::STATUS)
-                ->badge(),
-            TextColumn::make('localization.'.Localization::DISPLAY_LOCALIZATION_NUMBER),
         ];
     }
 
     public static function getFormSchema(): array
     {
         return [
-            TextInput::make(Item::DISPLAY_ITEM_NUMBER)
-                ->disabled()
-                ->columnSpanFull()
-                ->hiddenOn(['create'])
-                ->formatStateUsing(fn ($record) => $record?->{Item::DISPLAY_ITEM_NUMBER}),
-            Textarea::make(Item::DESCRIPTION)->columnSpanFull(),
 
-            Fieldset::make(__('filament.fields.weight'))
-                ->schema([
-                    ToggleButtons::make(Item::WEIGHT_UNIT)
-                        ->required()
-                        ->inline()
-                        ->options(WeightUnits::class)
-                        ->default(WeightUnits::LB),
-                    DecimalInput::make(Item::WEIGHT),
-                ]),
-            Fieldset::make(__('filament.fields.dimension'))
-                ->columns(4)
-                ->schema([
-                    ToggleButtons::make(Item::DIMENSION_UNIT)
-                        ->required()
-                        ->inline()
-                        ->options(DimensionUnits::class)
-                        ->default(DimensionUnits::CM),
-                    DecimalInput::make(Item::WIDTH),
-                    DecimalInput::make(Item::LENGTH),
-                    DecimalInput::make(Item::HEIGHT),
-                ]),
         ];
     }
 
     public static function getFormExtraSchema(): array
     {
         return [
-            Select::make(Item::RECEIPT_ID)
-                ->relationship('receipt', 'id')
-                ->disabled()
-                ->hiddenOn([PlanReceiptItemsRelationManager::class, PlanShipmentItemsRelationManager::class])
-                ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->{Receipt::DISPLAY_RECEIPT_NUMBER})
-                ->nullable(),
 
-            Select::make(Item::SHIPMENT_ID)
-                ->relationship('shipment', 'id')
-                ->disabled()
-                ->hiddenOn([PlanReceiptItemsRelationManager::class, PlanShipmentItemsRelationManager::class])
-                ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->{Shipment::DISPLAY_SHIPMENT_NUMBER})
-                ->nullable(),
-
-            Select::make(Item::CUSTOMER_ID)
-                ->relationship('customer', 'id')
-                ->disabledOn(['edit'])
-                ->hiddenOn([PlanReceiptItemsRelationManager::class, PlanShipmentItemsRelationManager::class])
-                ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->{Customer::NAME})
-                ->required(),
-            Select::make(Item::LOCALIZATION_ID)
-                ->relationship(
-                    name: 'localization',
-                    titleAttribute: 'id',
-                    modifyQueryUsing: fn (Builder $query) => $query->whereHas('warehouse', function ($query) {
-                        $query->where('organization_id', filament()->getTenant()->id);
-                    })
-                )
-                ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->{Localization::DISPLAY_LOCALIZATION_NUMBER})
-                ->required(),
         ];
     }
 

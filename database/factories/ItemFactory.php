@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Enums\DimensionUnits;
-use App\Enums\ItemStatus;
-use App\Enums\WeightUnits;
 use App\Models\Item;
 use Bezhanov\Faker\ProviderCollectionHelper;
+use Database\Factories\Concerns\CanCreateImages;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ItemFactory extends Factory
 {
+    use CanCreateImages;
+
     protected $model = Item::class;
 
     public function definition(): array
@@ -18,14 +18,13 @@ class ItemFactory extends Factory
         ProviderCollectionHelper::addAllProvidersTo($this->faker);
 
         return [
-            Item::STATUS => ItemStatus::randomValue(),
-            Item::DESCRIPTION => $this->faker->productName,
-            Item::WEIGHT => $this->faker->randomFloat(2, 1, 100),
-            Item::WEIGHT_UNIT => WeightUnits::KG->value,
-            Item::WIDTH => $this->faker->randomFloat(2, 1, 100),
-            Item::LENGTH => $this->faker->randomFloat(2, 1, 100),
-            Item::HEIGHT => $this->faker->randomFloat(2, 1, 100),
-            Item::DIMENSION_UNIT => DimensionUnits::CM->value,
+            Item::TITLE => $this->faker->productName,
+            Item::DESCRIPTION => $this->faker->paragraph(),
+            Item::MEDIA => $this->createImage(),
+            Item::SKU => $this->faker->unique()->uuid,
+            Item::DEFAULT_PRICE => $this->faker->randomFloat(2, 100, 10000),
+            Item::CATEGORY_ID => null, //To fill in seeder
+            Item::WEIGHT => $this->faker->numberBetween(1, 100),
         ];
     }
 }

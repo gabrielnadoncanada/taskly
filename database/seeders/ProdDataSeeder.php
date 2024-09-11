@@ -72,7 +72,7 @@ class ProdDataSeeder extends Seeder
     protected function seedAdmin(): void
     {
         User::factory()->create([
-            User::FIRSTNAME => self::ADMIN_NAME,
+            User::FIRST_NAME => self::ADMIN_NAME,
             User::EMAIL => self::ADMIN_EMAIL,
             User::PASSWORD => Hash::make(self::ADMIN_PASSWORD),
         ])->assignRole(self::ADMIN_ROLE);

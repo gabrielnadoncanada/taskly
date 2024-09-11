@@ -43,6 +43,16 @@ class Organization extends Model implements HasName
         return $this->morphMany(Address::class, 'addressable');
     }
 
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
@@ -53,9 +63,14 @@ class Organization extends Model implements HasName
         return $this->hasMany(Address::class);
     }
 
-    public function customers(): HasMany
+    public function clients(): HasMany
     {
-        return $this->hasMany(Customer::class);
+        return $this->hasMany(Client::class);
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
     }
 
     public function items(): HasMany
@@ -63,29 +78,19 @@ class Organization extends Model implements HasName
         return $this->hasMany(Item::class);
     }
 
-    public function localizations(): HasMany
+    public function suppliers(): HasMany
     {
-        return $this->hasMany(Localization::class);
+        return $this->hasMany(Supplier::class);
     }
 
-    public function carriers(): HasMany
+    public function getMeasurementSystemSuffix(): string
     {
-        return $this->hasMany(Carrier::class);
+        return $this->measurement_system === MeasurementSystem::METRIC ? 'kg' : 'lb';
     }
 
-    public function receipts(): HasMany
+    public function getCurrencySymbol(): string
     {
-        return $this->hasMany(Receipt::class);
-    }
-
-    public function shipments(): HasMany
-    {
-        return $this->hasMany(Shipment::class);
-    }
-
-    public function warehouses(): HasMany
-    {
-        return $this->hasMany(Warehouse::class);
+        return $this->currency === Currency::CAD ? 'CAD$' : ($this->currency === Currency::USD ? 'USD$' : '$');
     }
 
     public function users(): BelongsToMany
@@ -97,13 +102,4 @@ class Organization extends Model implements HasName
     {
         return "$this->title";
     }
-    //endregion
-
-    //region ATTRIBUTES
-
-    //endregion
-
-    //region FUNCTIONS
-
-    //endregion
 }

@@ -3,7 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\ItemStatus;
-use App\Models\Customer;
+use App\Models\Client;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -53,7 +53,7 @@ class StatsOverviewWidget extends BaseWidget
 
     protected function getUnloadedCount($customerId, $startDate, $endDate)
     {
-        return Customer::find($customerId)
+        return Client::find($customerId)
             ->items()
             ->where('items.status', ItemStatus::STORED)
             ->whereHas('receipt', function ($query) use ($startDate, $endDate) {
@@ -65,7 +65,7 @@ class StatsOverviewWidget extends BaseWidget
 
     protected function getLoadedCount($customerId, $startDate, $endDate)
     {
-        return Customer::find($customerId)
+        return Client::find($customerId)
             ->items()
             ->where('items.status', ItemStatus::SHIPPED)
             ->whereHas('shipment', function ($query) use ($startDate, $endDate) {
@@ -95,7 +95,7 @@ class StatsOverviewWidget extends BaseWidget
     {
         $customerId = $this->filters['customer_id'];
 
-        if ($customerId && Customer::find($customerId)) {
+        if ($customerId && Client::find($customerId)) {
             return $customerId;
         }
 

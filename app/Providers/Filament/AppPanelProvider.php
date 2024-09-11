@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard;
-use App\Filament\Widgets\CustomersChart;
 use App\Filament\Widgets\EventCalendarWidget;
 use App\Filament\Widgets\InfoWidget;
 use App\Filament\Widgets\OrdersChart;
@@ -36,13 +35,14 @@ class AppPanelProvider extends PanelProvider
             ->id('app')
             ->path('/')
             ->login(Login::class)
-            ->brandLogo(asset('/img/logo-light.svg'))
-            ->darkModeBrandLogo(asset('/img/logo-dark.svg'))
+            ->profile()
+//            ->brandLogo(asset('/img/logo-light.svg'))
+//            ->darkModeBrandLogo(asset('/img/logo-dark.svg'))
             ->brandLogoHeight('20px')
             ->colors([
                 'primary' => Color::rgb('rgb(255,153,0)'),
             ])
-            ->renderHook(PanelsRenderHook::BODY_START, fn (): View => view('filament.staging-banner'))
+//            ->renderHook(PanelsRenderHook::BODY_START, fn (): View => view('filament.staging-banner'))
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): View => view('components.layouts.footer'),
@@ -55,7 +55,10 @@ class AppPanelProvider extends PanelProvider
             ->passwordReset()
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-                FilamentFullCalendarPlugin::make(),
+                FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable()
+                ->plugins(['dayGrid', 'timeGrid', 'list','interaction']),
 
             ])
             ->widgets([

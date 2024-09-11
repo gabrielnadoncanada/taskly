@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Address;
-use App\Models\Customer;
+use App\Models\Client;
 use Bezhanov\Faker\ProviderCollectionHelper;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Squire\Models\Region;
@@ -31,12 +31,12 @@ class AddressFactory extends Factory
         return strtoupper($this->faker->bothify('?#?#?#'));
     }
 
-    public function forCustomer()
+    public function forClient()
     {
         return $this->state(function (array $attributes) {
             return [
-                Address::ADDRESSABLE_ID => Customer::factory(),
-                Address::ADDRESSABLE_TYPE => Customer::class,
+                Address::ADDRESSABLE_ID => Client::factory(),
+                Address::ADDRESSABLE_TYPE => Client::class,
             ];
         });
     }

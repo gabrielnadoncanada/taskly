@@ -9,6 +9,6 @@ class OrganizationSeeder extends Seeder
 {
     public function run()
     {
-        Organization::factory(4)->create();
+        Organization::factory(1)->create();
     }
 }

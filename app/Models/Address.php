@@ -47,7 +47,7 @@ class Address extends Model
 
     public function region(): BelongsTo
     {
-        return $this->belongsTo(Region::class, 'province');
+        return $this->belongsTo(Region::class, 'state');
     }
 
     protected function displayProvince(): Attribute
