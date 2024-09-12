@@ -37,12 +37,7 @@ class CategoryResource extends AbstractResource
         ];
     }
 
-    protected static function rightColumn(): array
-    {
-        return [
-            TimeStampSection::make(),
-        ];
-    }
+
 
     public static function getFormFieldsSchema(): array
     {
