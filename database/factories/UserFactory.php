@@ -19,7 +19,6 @@ class UserFactory extends Factory
         return [
             User::FIRST_NAME => $this->faker->firstName,
             User::LAST_NAME => $this->faker->lastName,
-            User::LANGUAGE => Language::FR,
             User::NOTE => $this->faker->sentence,
             User::PHONE => $this->faker->phoneNumber,
             User::EMAIL => $this->faker->unique()->safeEmail,

@@ -32,7 +32,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
 
     public const NOTE = 'note';
 
-    public const LANGUAGE = 'language';
 
     public const PHONE = 'phone';
 
@@ -60,7 +59,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
         return [
             self::EMAIL_VERIFIED_AT => 'datetime',
             self::PASSWORD => 'hashed',
-            self::LANGUAGE => Language::class,
         ];
     }
 

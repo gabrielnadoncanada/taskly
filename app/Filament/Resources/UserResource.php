@@ -109,11 +109,7 @@ class UserResource extends AbstractResource implements HasShieldPermissions
             PhoneInput::make(User::PHONE)
                 ->default(null),
 
-            Forms\Components\Select::make(User::LANGUAGE)
-                ->options(Language::class)
-                ->default(Language::FR)
-                ->selectablePlaceholder(false)
-                ->required(),
+
             Forms\Components\Textarea::make(User::NOTE)
                 ->rows(4)
                 ->columnSpanFull(),
