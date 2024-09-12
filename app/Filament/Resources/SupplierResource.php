@@ -31,28 +31,14 @@ class SupplierResource extends AbstractResource
     protected static function leftColumn(): array
     {
         return [
-            Section::make(self::getFormFieldsSchema()),
-
-        ];
-    }
-
-    protected static function rightColumn(): array
-    {
-        return [
-            TimeStampSection::make(),
-
-        ];
-    }
-
-    public static function getFormFieldsSchema(): array
-    {
-        return [
-            Group::make([
+            Section::make([
                 TextInput::make(Supplier::TITLE)
                     ->required(),
             ]),
+
         ];
     }
+
 
     public static function table(Table $table): Table
     {
@@ -63,7 +49,7 @@ class SupplierResource extends AbstractResource
                 Tables\Columns\TextColumn::make(Supplier::EMAIL)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->getStateUsing(fn ($record): ?string => Country::find($record->addresses->first()?->country)?->name ?? null),
+                    ->getStateUsing(fn($record): ?string => Country::find($record->addresses->first()?->country)?->name ?? null),
                 Tables\Columns\TextColumn::make(Supplier::PHONE)
                     ->searchable()
                     ->sortable(),

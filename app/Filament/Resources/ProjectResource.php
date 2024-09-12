@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ProjectStatus;
+use App\Enums\TaskStatus;
 use App\Filament\AbstractResource;
 use App\Filament\Components\TimeStampSection;
 use App\Filament\Resources\ProjectResource\Pages;
@@ -9,6 +11,8 @@ use App\Filament\Resources\ProjectResource\RelationManagers\TasksRelationManager
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -34,31 +38,33 @@ class ProjectResource extends AbstractResource
             Section::make([
                 TextInput::make(Project::TITLE)
                     ->required(),
-                RichEditor::make(Project::DESCRIPTION),
-
-            ]),
-
-        ];
-    }
-
-    protected static function rightColumn(): array
-    {
-        return [
-            TimeStampSection::make(),
-            Section::make([
                 Select::make(Project::CLIENT_ID)
                     ->relationship('client', 'name')
                     ->required(),
                 DatePicker::make(Project::DATE)
                     ->default(now())
                     ->required(),
+                RichEditor::make(Project::DESCRIPTION),
             ]),
         ];
     }
 
-    public static function getFormFieldsSchema(): array
+    public static function rightColumn(): array
     {
         return [
+            Section::make()
+                ->schema([
+                    Select::make(Project::STATUS)
+                        ->default(ProjectStatus::NOT_STARTED)
+                        ->selectablePlaceholder(false)
+                        ->options(ProjectStatus::class),
+                    Select::make('user_id')
+                        ->multiple()
+                        ->relationship('users')
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->searchable(),
+                ])
+
 
         ];
     }
@@ -71,7 +77,6 @@ class ProjectResource extends AbstractResource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('client.name')
                     ->sortable(),
-
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -80,13 +85,11 @@ class ProjectResource extends AbstractResource
                 Tables\Actions\EditAction::make(),
                 SoftDeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
-
             ])
             ->bulkActions([
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 SoftDeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
-
             ]);
     }
 

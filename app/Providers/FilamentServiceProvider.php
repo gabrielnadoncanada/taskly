@@ -39,7 +39,7 @@ class FilamentServiceProvider extends ServiceProvider
             $field->label(function () use ($field): string {
                 $fieldName = $field->getName();
 
-                return __("filament.fields.$fieldName");
+                return __("fields.$fieldName");
             });
         });
 
@@ -47,7 +47,7 @@ class FilamentServiceProvider extends ServiceProvider
             $column->label(function () use ($column): string {
                 $fieldName = $column->getName();
 
-                return __("filament.fields.$fieldName");
+                return __("fields.$fieldName");
             });
         });
 

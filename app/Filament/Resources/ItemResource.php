@@ -79,23 +79,15 @@ class ItemResource extends AbstractResource
     protected static function rightColumn(): array
     {
         return [
-            TimeStampSection::make(),
-            Section::make('Associations')
-                ->schema([
-
-                    Select::make(Item::CATEGORY_ID)
-                        ->columnSpanFull()
-                        ->searchable()
-                        ->live()
-                        ->preload()
-                        ->editOptionForm(CategoryResource::getFormFieldsSchema())
-                        ->createOptionForm(CategoryResource::getFormFieldsSchema())
-                        ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
-                        ->relationship(name: 'category', titleAttribute: Category::TITLE),
-
-                ])
-                ->columns(1)
-                ->columnSpanFull(),
+            Select::make(Item::CATEGORY_ID)
+                ->columnSpanFull()
+                ->searchable()
+                ->live()
+                ->preload()
+                ->editOptionForm(CategoryResource::getFormFieldsSchema())
+                ->createOptionForm(CategoryResource::getFormFieldsSchema())
+                ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
+                ->relationship(name: 'category', titleAttribute: Category::TITLE),
         ];
     }
 

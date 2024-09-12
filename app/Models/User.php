@@ -104,6 +104,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
             ->withTimestamps();
     }
 
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user')
+            ->withTimestamps();
+    }
+
     // Tâches où l'utilisateur doit entreprendre une action
     public function actionTasks()
     {

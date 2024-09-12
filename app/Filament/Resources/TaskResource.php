@@ -7,6 +7,7 @@ use App\Filament\AbstractResource;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
+use App\Filament\Tables\Columns\EllipsisTextColumn;
 use App\Models\Item;
 use App\Models\Project;
 use App\Models\Task;
@@ -14,6 +15,7 @@ use App\Models\User;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
@@ -21,6 +23,8 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
@@ -36,82 +40,18 @@ class TaskResource extends AbstractResource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $recordTitleAttribute = 'tasks';
+    protected static ?string $recordTitleAttribute = 'title';
+
 
     protected static ?int $navigationSort = 6;
+
 
     public static function leftColumn(): array
     {
         return [
-            Section::make()
-                ->schema([
-                    TextInput::make(Task::TITLE)
-                        ->required(),
-                    RichEditor::make(Task::DESCRIPTION)
-                        ->required(),
-                ]),
-            Section::make('Sub Tasks')
-                ->hidden(fn ($record) => $record->parent()->exists())
-                ->schema([
-                    TableRepeater::make('children')
-                        ->hiddenLabel()
-                        ->extraItemActions([
-                            Action::make('openTask')
-                                ->icon('heroicon-o-pencil-square')
-                                ->url(function (array $arguments, Repeater $component, $record): ?string {
-                                    $itemData = $component->getRawItemState($arguments['item']);
-                                    if (! array_key_exists('id', $itemData)) {
-                                        return null;
-                                    } else {
-                                        $record = Task::find($itemData['id']);
-                                    }
-
-                                    return TaskResource::getUrl('edit', ['record' => $record]);
-                                }),
-                        ])
-                        ->relationship('children')
-                        ->headers([
-                            Header::make('title'),
-                            Header::make('status'),
-                        ])
-                        ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
-                            $data['project_id'] = $get(Task::PROJECT_ID);
-
-                            return $data;
-                        })
-                        ->schema([
-                            TextInput::make(Task::TITLE)
-                                ->required(),
-                            Select::make(Task::STATUS)
-                                ->default(TaskStatus::NOT_STARTED)
-                                ->selectablePlaceholder(false)
-                                ->options(TaskStatus::class),
-                        ])
-                        ->required(),
-                ]),
-            Section::make('Items')
-                ->collapsible()
-                ->schema([
-                    TableRepeater::make('items')
-                        ->hiddenLabel()
-                        ->relationship('items')
-                        ->headers([
-                            Header::make('title'),
-                            Header::make('quantity'),
-                        ])
-                        ->schema([
-                            Select::make('item_id')
-                                ->searchable()
-                                ->preload()
-                                ->options(Item::all()->pluck('title', 'id')),
-                            TextInput::make('quantity')
-                                ->default(1)
-                                ->type('number'),
-
-                        ])
-                        ->required(),
-
-                ]),
+            static::generalSection(),
+//            static::subTasksSection(),
+//            static::itemsSection(),
         ];
     }
 
@@ -120,13 +60,6 @@ class TaskResource extends AbstractResource
         return [
             Section::make()
                 ->schema([
-                    Select::make(Task::PROJECT_ID)
-                        ->relationship('project')
-                        ->options(Project::all()->pluck(Project::TITLE, 'id'))
-                        ->required(),
-                    DateTimePicker::make(Task::DATE)
-                        ->default(now())
-                        ->required(),
                     Select::make(Task::STATUS)
                         ->default(TaskStatus::NOT_STARTED)
                         ->selectablePlaceholder(false)
@@ -136,33 +69,123 @@ class TaskResource extends AbstractResource
                         ->relationship('users')
                         ->options(User::all()->pluck('name', 'id'))
                         ->searchable(),
-
                 ])
                 ->columns(1)
                 ->columnSpanFull(),
         ];
     }
 
+    public static function generalSection(): Section
+    {
+        return Section::make()
+            ->schema([
+                TextInput::make(Task::TITLE)
+                    ->required(),
+                Select::make(Task::PROJECT_ID)
+                    ->relationship('project')
+                    ->options(Project::all()->pluck(Project::TITLE, 'id'))
+                    ->required(),
+                DatePicker::make(Task::DATE)
+                    ->default(now())
+                    ->required(),
+                RichEditor::make(Task::DESCRIPTION),
+            ]);
+    }
+
+    public static function subTasksSection(): Section
+    {
+        return Section::make('Sub Tasks')
+            ->collapsible()
+            ->collapsed(fn($record) => !$record)
+            ->hidden(fn($record) => $record?->parent()->exists())
+            ->schema([
+                TableRepeater::make('children')
+                    ->hiddenLabel()
+                    ->extraItemActions([
+                        Action::make('openTask')
+                            ->icon('heroicon-o-pencil-square')
+                            ->url(function (array $arguments, Repeater $component, $record): ?string {
+                                $itemData = $component->getRawItemState($arguments['item']);
+                                if (!array_key_exists('id', $itemData)) {
+                                    return null;
+                                } else {
+                                    $record = Task::find($itemData['id']);
+                                }
+
+                                return TaskResource::getUrl('edit', ['record' => $record]);
+                            }),
+                    ])
+                    ->relationship('children')
+                    ->headers([
+                        Header::make('title'),
+                        Header::make('status'),
+                    ])
+                    ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                        $data['project_id'] = $get(Task::PROJECT_ID);
+
+                        return $data;
+                    })
+                    ->schema([
+                        TextInput::make(Task::TITLE)
+                            ->required(),
+                        Select::make(Task::STATUS)
+                            ->default(TaskStatus::NOT_STARTED)
+                            ->selectablePlaceholder(false)
+                            ->options(TaskStatus::class),
+                    ])
+                    ->required(),
+            ]);
+    }
+
+    public static function itemsSection(): Section
+    {
+        Section::make('Items')
+            ->collapsed(fn($record) => !$record)
+            ->collapsible()
+            ->schema([
+                TableRepeater::make('items')
+                    ->hiddenLabel()
+                    ->relationship('items')
+                    ->headers([
+                        Header::make('title'),
+                        Header::make('quantity'),
+                    ])
+                    ->schema([
+                        Select::make('item_id')
+                            ->searchable()
+                            ->preload()
+                            ->options(Item::all()->pluck('title', 'id')),
+                        TextInput::make('quantity')
+                            ->default(1)
+                            ->type('number'),
+
+                    ])
+                    ->required(),
+
+            ]);
+    }
+
+
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(Task::TITLE),
-                Tables\Columns\TextColumn::make('parent.title'),
+                Tables\Columns\TextColumn::make(Task::TITLE)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make(Task::STATUS)
                     ->badge(),
                 Tables\Columns\TextColumn::make(Task::DATE)
                     ->date('Y-m-d'),
-                Tables\Columns\TextColumn::make('users.first_name'),
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()->modalWidth(MaxWidth::SevenExtraLarge),
                 SoftDeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),

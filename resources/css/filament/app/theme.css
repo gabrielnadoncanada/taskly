@@ -3,6 +3,7 @@
 
 @config 'tailwind.config.js';
 
-.fc-h-event {
 
+html.dark .fi-body {
+    background-color: rgba(var(--gray-900),1) !important;
 }

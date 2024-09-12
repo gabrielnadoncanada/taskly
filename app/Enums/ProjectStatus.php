@@ -5,15 +5,18 @@ namespace App\Enums;
 use App\Enums\Traits\HasRandomEnum;
 use App\Enums\Traits\HasTranslatableLabel;
 use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum ProjectStatus: string implements HasColor, HasIcon, HasLabel
+enum ProjectStatus: string implements HasColor, HasLabel
 {
     use HasRandomEnum, HasTranslatableLabel;
 
-    case NEW = 'new';
-    case PROCESSING = 'processing';
+    case NOT_STARTED = 'not_started';
+    case IN_PROGRESS = 'in_progress';
+    case REVIEW = 'review';
+    case ON_HOLD = 'on_hold';
+    case CLOSED = 'closed';
+
     case CANCELLED = 'cancelled';
 
     public function getLabel(): string
@@ -24,18 +27,10 @@ enum ProjectStatus: string implements HasColor, HasIcon, HasLabel
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::NEW => 'info',
-            self::PROCESSING => 'warning',
-            self::CANCELLED => 'danger',
-        };
-    }
-
-    public function getIcon(): ?string
-    {
-        return match ($this) {
-            self::NEW => 'heroicon-m-sparkles',
-            self::PROCESSING => 'heroicon-m-arrow-path',
-            self::CANCELLED => 'heroicon-m-x-circle',
+            self::NOT_STARTED => 'info',
+            self::IN_PROGRESS => 'success',
+            self::REVIEW, self::ON_HOLD => 'warning',
+            self::CLOSED, self::CANCELLED => 'gray',
         };
     }
 }

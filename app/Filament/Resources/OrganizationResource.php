@@ -41,37 +41,26 @@ class OrganizationResource extends AbstractResource
             Section::make()
                 ->columnSpan(1)
                 ->columns()
-                ->schema(self::getFormFieldsSchema()),
+                ->schema([
+                    Forms\Components\TextInput::make(Organization::TITLE)
+                        ->required(),
+                    Forms\Components\Select::make(Organization::CURRENCY)
+                        ->options(Currency::class)
+                        ->default(Currency::CAD)
+                        ->selectablePlaceholder(false)
+                        ->required(),
+                    Forms\Components\ToggleButtons::make(Organization::MEASUREMENT_SYSTEM)
+                        ->options(MeasurementSystem::class)
+                        ->default(MeasurementSystem::METRIC)
+                        ->inline()
+                        ->required(),
+                    Forms\Components\TextInput::make(Organization::EMAIL)
+                        ->email()
+                        ->required(),
+                ]),
         ];
     }
 
-    protected static function rightColumn(): array
-    {
-        return [
-            TimeStampSection::make(),
-        ];
-    }
-
-    protected static function getFormFieldsSchema(): array
-    {
-        return [
-            Forms\Components\TextInput::make(Organization::TITLE)
-                ->required(),
-            Forms\Components\Select::make(Organization::CURRENCY)
-                ->options(Currency::class)
-                ->default(Currency::CAD)
-                ->selectablePlaceholder(false)
-                ->required(),
-            Forms\Components\ToggleButtons::make(Organization::MEASUREMENT_SYSTEM)
-                ->options(MeasurementSystem::class)
-                ->default(MeasurementSystem::METRIC)
-                ->inline()
-                ->required(),
-            Forms\Components\TextInput::make(Organization::EMAIL)
-                ->email()
-                ->required(),
-        ];
-    }
 
     public static function table(Table $table): Table
     {
@@ -107,7 +96,6 @@ class OrganizationResource extends AbstractResource
                 Tables\Actions\RestoreAction::make(),
                 SoftDeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
-
             ])
             ->bulkActions([
                 SoftDeleteBulkAction::make(),

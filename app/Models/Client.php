@@ -24,7 +24,7 @@ class Client extends Model
 
     public const PHONE = 'phone';
 
-    public const NOTES = 'notes';
+    public const NOTE = 'note';
 
     public const ORGANIZATION_ID = 'organization_id';
 

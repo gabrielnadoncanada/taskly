@@ -37,13 +37,7 @@ class ClientResource extends AbstractResource
         ];
     }
 
-    protected static function rightColumn(): array
-    {
-        return [
-            TimeStampSection::make(),
 
-        ];
-    }
 
     public static function table(Table $table): Table
     {
@@ -100,7 +94,7 @@ class ClientResource extends AbstractResource
             TextInput::make(Client::EMAIL)
                 ->email(),
             PhoneInput::make(Client::PHONE),
-            Textarea::make(Client::NOTES)
+            Textarea::make(Client::NOTE)
                 ->rows(5)
                 ->columnSpanFull()
                 ->columnSpanFull(),

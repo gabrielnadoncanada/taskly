@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Widgets\EventCalendarWidget;
-use App\Filament\Widgets\InfoWidget;
 use App\Filament\Widgets\OrdersChart;
 use App\Filament\Widgets\StatsOverviewWidget;
 use App\Models\Organization;
@@ -62,7 +61,6 @@ class AppPanelProvider extends PanelProvider
 
             ])
             ->widgets([
-                InfoWidget::class,
                 EventCalendarWidget::class,
 
                 //                StatsOverviewWidget::class,

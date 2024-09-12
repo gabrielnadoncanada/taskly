@@ -23,7 +23,7 @@ abstract class AbstractResource extends Resource
             ->schema([
                 Group::make()
                     ->schema(static::leftColumn())
-                    ->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
+                    ->columnSpan(['lg' => fn($record) => static::leftColumnSpan($record)]),
                 Group::make()
                     ->schema(static::rightColumn())
                     ->columnSpan(['lg' => 1]),
@@ -31,23 +31,33 @@ abstract class AbstractResource extends Resource
             ->columns(3);
     }
 
+    public static function leftColumnSpan(?Model $record): int
+    {
+        return (static::hasRightColumn()) ? 2 : 3;
+    }
+
+    private static function hasRightColumn(): bool
+    {
+        return !empty(static::rightColumn());
+    }
+
     abstract protected static function leftColumn(): array;
 
     protected static function rightColumn(): array
     {
         return [
-            TimeStampSection::make(),
+
         ];
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament.models.'.parent::getModelLabel());
+        return __('filament.models.' . parent::getModelLabel());
     }
 
     public static function getRecordTitle(?Model $record): string|Htmlable|null
     {
-        if (! static::$customRecordTitleAttribute) {
+        if (!static::$customRecordTitleAttribute) {
             return parent::getRecordTitle($record);
         }
 

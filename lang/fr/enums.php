@@ -15,6 +15,14 @@ return [
         'closed' => 'Fermé',
         'cancelled' => 'Annulé',
     ],
+    'project_status' => [
+        'not_started' => 'Non commencé',
+        'in_progress' => 'En cours',
+        'review' => 'Révision',
+        'on_hold' => 'En attente',
+        'closed' => 'Fermé',
+        'cancelled' => 'Annulé',
+    ],
     'order_status' => [
         'new' => 'Nouveau',
         'processing' => 'En cours',
