@@ -42,7 +42,7 @@ class UserResource extends AbstractResource implements HasShieldPermissions
                 ->columnSpan(1),
             Section::make(__('filament.sections.password'))
                 ->collapsible()
-                ->collapsed()
+                ->collapsed(fn($record) => $record)
                 ->schema(static::getPasswordFormComponent()),
         ];
     }
@@ -60,9 +60,7 @@ class UserResource extends AbstractResource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make(User::EMAIL)
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make(User::OFFICE_PHONE)
-                    ->sortable()
-                    ->searchable(),
+
                 Tables\Columns\TextColumn::make(User::PHONE)
                     ->sortable()
                     ->searchable(),
@@ -110,8 +108,7 @@ class UserResource extends AbstractResource implements HasShieldPermissions
                 ->required(),
             PhoneInput::make(User::PHONE)
                 ->default(null),
-            PhoneInput::make(User::OFFICE_PHONE)
-                ->default(null),
+
             Forms\Components\Select::make(User::LANGUAGE)
                 ->options(Language::class)
                 ->default(Language::FR)

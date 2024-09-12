@@ -43,11 +43,11 @@ class ClientResource extends AbstractResource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(Client::NAME),
+                Tables\Columns\TextColumn::make(Client::NAME)
+                ->searchable()
+                    ->tooltip(fn ($record): string => $record->{Client::NOTE} ?? ''),
                 Tables\Columns\TextColumn::make(Client::EMAIL)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('address')
-                    ->getStateUsing(fn ($record): ?string => Country::find($record->addresses->first()?->country)?->name ?? null),
                 Tables\Columns\TextColumn::make(Client::PHONE)
                     ->searchable()
                     ->sortable(),

@@ -20,6 +20,7 @@ class Item extends Model
 
     protected $casts = [
         self::STATUS => ItemStatus::class,
+        self::MEDIA => 'array',
     ];
 
     public const STATUS = 'status';

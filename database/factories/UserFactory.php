@@ -21,7 +21,6 @@ class UserFactory extends Factory
             User::LAST_NAME => $this->faker->lastName,
             User::LANGUAGE => Language::FR,
             User::NOTE => $this->faker->sentence,
-            User::OFFICE_PHONE => $this->faker->phoneNumber,
             User::PHONE => $this->faker->phoneNumber,
             User::EMAIL => $this->faker->unique()->safeEmail,
             User::EMAIL_VERIFIED_AT => now(),

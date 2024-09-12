@@ -35,8 +35,7 @@ class UsersRelationManager extends RelationManager
                     ->searchable(),
                 Tables\Columns\TextColumn::make(User::EMAIL)
                     ->searchable(),
-                Tables\Columns\TextColumn::make(User::OFFICE_PHONE)
-                    ->searchable(),
+
                 Tables\Columns\TextColumn::make(User::PHONE)
                     ->searchable(),
                 Tables\Columns\TextColumn::make(User::EMAIL_VERIFIED_AT)

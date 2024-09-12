@@ -147,7 +147,6 @@ return [
     'last_name' => 'Nom',
     'currency' => 'Monnaie',
     'measurement_system' => 'Système de mesure',
-    'office_phone' => 'Téléphone de bureau',
     'language' => 'Langue',
     'internal_id' => 'ID interne',
     'addressable' => 'Association',

@@ -29,7 +29,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
 
     public const LAST_NAME = 'last_name';
 
-    public const OFFICE_PHONE = 'office_phone';
 
     public const NOTE = 'note';
 
@@ -46,6 +45,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
     public const REMEMBER_TOKEN = 'remember_token';
 
     public const EMAIL_VERIFIED_AT = 'email_verified_at';
+
+    protected $guarded = [
+
+    ];
 
     protected $hidden = [
         self::PASSWORD,

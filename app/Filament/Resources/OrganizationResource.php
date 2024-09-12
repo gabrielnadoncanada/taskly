@@ -44,6 +44,9 @@ class OrganizationResource extends AbstractResource
                 ->schema([
                     Forms\Components\TextInput::make(Organization::TITLE)
                         ->required(),
+                    Forms\Components\TextInput::make(Organization::EMAIL)
+                        ->email()
+                        ->required(),
                     Forms\Components\Select::make(Organization::CURRENCY)
                         ->options(Currency::class)
                         ->default(Currency::CAD)
@@ -54,9 +57,7 @@ class OrganizationResource extends AbstractResource
                         ->default(MeasurementSystem::METRIC)
                         ->inline()
                         ->required(),
-                    Forms\Components\TextInput::make(Organization::EMAIL)
-                        ->email()
-                        ->required(),
+
                 ]),
         ];
     }
