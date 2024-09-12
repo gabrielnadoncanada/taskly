@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(1);
-            $table->foreignId('supplier')->constrained()->onDelete('cascade');
+            $table->foreignId('supplier')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -18,7 +18,6 @@ final class Category extends Model
 
     public $guarded = [];
 
-    //region CONSTANTS
     public const TITLE = 'title';
 
     public const DESCRIPTION = 'description';

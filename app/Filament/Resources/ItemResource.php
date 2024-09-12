@@ -15,12 +15,10 @@ use App\Models\Category;
 use App\Models\Item;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\EditAction;
@@ -47,64 +45,58 @@ class ItemResource extends AbstractResource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    public static function form(Form $form): Form
+    protected static function leftColumn(): array
     {
-        return $form
-            ->schema([
-                Group::make()
-                    ->schema([
-                        Section::make()
-                            ->columnSpan(1)
-                            ->columns()
-                            ->schema([
-                                TextInput::make(Item::TITLE)->required()->columnSpanFull(),
-                                Textarea::make(Item::DESCRIPTION)->columnSpanFull(),
-                                DecimalInput::make(Item::DEFAULT_PRICE),
-                                TextInput::make(Item::SKU)
-                                    ->unique(Item::class, Item::SKU, ignoreRecord: true),
-                                TextInput::make(Item::WEIGHT)
-                                    ->numeric()
-                                    ->columnSpanFull()
-                                    ->suffix(fn () => Filament::getTenant() ? Filament::getTenant()->getMeasurementSystemSuffix() : 'kg'),
-                            ]),
+        return [
+            Section::make()
+                ->columnSpan(1)
+                ->columns()
+                ->schema([
+                    TextInput::make(Item::TITLE)->required()->columnSpanFull(),
+                    RichEditor::make(Item::DESCRIPTION)->columnSpanFull(),
+                    DecimalInput::make(Item::DEFAULT_PRICE),
+                    TextInput::make(Item::SKU)
+                        ->unique(Item::class, Item::SKU, ignoreRecord: true),
+                    TextInput::make(Item::WEIGHT)
+                        ->numeric()
+                        ->columnSpanFull()
+                        ->suffix(fn () => Filament::getTenant() ? Filament::getTenant()->getMeasurementSystemSuffix() : 'kg'),
+                ]),
 
-                        Section::make('Images')
-                            ->schema([
-                                FileUpload::make('media')
-                                    ->image()
-                                    ->multiple()
-                                    ->maxFiles(5)
-                                    ->hiddenLabel(),
-                            ])
-                            ->collapsible(),
+            Section::make('Images')
+                ->schema([
+                    FileUpload::make('media')
+                        ->image()
+                        ->multiple()
+                        ->maxFiles(5)
+                        ->hiddenLabel(),
+                ])
+                ->collapsible(),
 
-                    ])
-                    ->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
+        ];
+    }
 
-                Group::make()
-                    ->schema([
-                        TimeStampSection::make(),
-                        Section::make('Associations')
-                            ->schema([
+    protected static function rightColumn(): array
+    {
+        return [
+            TimeStampSection::make(),
+            Section::make('Associations')
+                ->schema([
 
-                                Select::make(Item::CATEGORY_ID)
-                                    ->columnSpanFull()
-                                    ->searchable()
-                                    ->live()
-                                    ->preload()
-                                    ->editOptionForm(CategoryResource::getFormFieldsSchema())
-                                    ->createOptionForm(CategoryResource::getFormFieldsSchema())
-                                    ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
-                                    ->relationship(name: 'category', titleAttribute: Category::TITLE),
+                    Select::make(Item::CATEGORY_ID)
+                        ->columnSpanFull()
+                        ->searchable()
+                        ->live()
+                        ->preload()
+                        ->editOptionForm(CategoryResource::getFormFieldsSchema())
+                        ->createOptionForm(CategoryResource::getFormFieldsSchema())
+                        ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
+                        ->relationship(name: 'category', titleAttribute: Category::TITLE),
 
-                            ])
-                            ->columns(1)
-                            ->columnSpanFull(),
-
-                    ])->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
-
+                ])
+                ->columns(1)
+                ->columnSpanFull(),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -133,11 +125,17 @@ class ItemResource extends AbstractResource
     public static function getTableColumns(): array
     {
         return [
-            ImageColumn::make(Item::MEDIA),
+            ImageColumn::make(Item::MEDIA)
+                ->circular(),
 
             TextColumn::make(Item::TITLE)
                 ->tooltip(fn ($record): string => $record->description ?? '')
                 ->searchable(),
+            TextColumn::make('category.title')
+                ->searchable()
+                ->sortable()
+                ->badge()
+                ->color(fn (Item $record) => Color::hex($record->category->color)),
             EllipsisTextColumn::make(Item::SKU)
                 ->searchable(),
             TextColumn::make(Item::DEFAULT_PRICE)
@@ -145,11 +143,6 @@ class ItemResource extends AbstractResource
                 ->sortable()
                 ->formatStateUsing(fn (Item $record) => $record->{Item::DEFAULT_PRICE}.' '.($record->organization ? $record->organization->getCurrencySymbol() : '$')),
 
-            TextColumn::make('category.title')
-                ->searchable()
-                ->sortable()
-                ->badge()
-                ->color(fn (Item $record) => Color::hex($record->category->color)),
             TextColumn::make('suppliers.title')
                 ->badge()
                 ->searchable(),

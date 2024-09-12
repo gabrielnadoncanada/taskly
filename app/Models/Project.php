@@ -19,8 +19,6 @@ class Project extends Model
 
     public const DATE = 'date';
 
-
-
     public const DESCRIPTION = 'description';
 
     public const ORGANIZATION_ID = 'organization_id';

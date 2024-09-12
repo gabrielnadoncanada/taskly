@@ -3,32 +3,23 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\ProjectResource;
-use App\Filament\Resources\TaskResource;
 use App\Models\Project;
 use App\Models\Receipt;
 use App\Models\Shipment;
+use App\Models\Task;
 use App\Models\User;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TimePicker;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Saade\FilamentFullCalendar\Actions;
-
-use App\Models\Task;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
 use Saade\FilamentFullCalendar\Actions\CreateAction;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class EventCalendarWidget extends FullCalendarWidget
 {
     public string|null|\Illuminate\Database\Eloquent\Model $model = Task::class;
-
 
     public function config(): array
     {
@@ -61,10 +52,10 @@ class EventCalendarWidget extends FullCalendarWidget
                 ->mountUsing(
                     function ($record, $form, array $arguments) {
                         $form->fill([
-                                Task::TITLE => $record->{Task::TITLE},
-                                Task::DATE => $arguments['event']['start'] ?? $record->{Task::DATE},
-                                Task::ALL_DAY => $arguments['event']['allDay'] ?? $record->{Task::ALL_DAY},
-                            ]
+                            Task::TITLE => $record->{Task::TITLE},
+                            Task::DATE => $arguments['event']['start'] ?? $record->{Task::DATE},
+                            Task::ALL_DAY => $arguments['event']['allDay'] ?? $record->{Task::ALL_DAY},
+                        ]
                         );
                     }
                 ),
@@ -76,7 +67,6 @@ class EventCalendarWidget extends FullCalendarWidget
     {
         return Actions\ViewAction::make();
     }
-
 
     public function fetchEvents(array $info = []): array
     {
@@ -113,7 +103,7 @@ class EventCalendarWidget extends FullCalendarWidget
         return [
             Group::make([
                 TextInput::make(Task::TITLE)
-                ->required(),
+                    ->required(),
                 Select::make(Task::PROJECT_ID)
                     ->relationship('project')
                     ->options(Project::all()->pluck(Project::TITLE, 'id'))
@@ -125,11 +115,9 @@ class EventCalendarWidget extends FullCalendarWidget
                     ->options(User::all()->pluck(User::NAME, 'id'))
                     ->columnSpanFull(),
                 DateTimePicker::make(Task::DATE)
-                ->default(now())
-                ->required(),
-            ])->columns()
+                    ->default(now())
+                    ->required(),
+            ])->columns(),
         ];
     }
-
-
 }

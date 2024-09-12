@@ -10,11 +10,10 @@ use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\Project;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -29,34 +28,38 @@ class ProjectResource extends AbstractResource
 
     protected static ?int $navigationSort = 10;
 
-    public static function form(Form $form): Form
+    protected static function leftColumn(): array
     {
-        return $form
-            ->schema([
-                Section::make()
+        return [
+            Section::make([
+                TextInput::make(Project::TITLE)
+                    ->required(),
+                RichEditor::make(Project::DESCRIPTION),
 
-                    ->schema(static::getFormFieldsSchema())
-                    ->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
-                TimeStampSection::make()
-                    ->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
+            ]),
 
+        ];
+    }
+
+    protected static function rightColumn(): array
+    {
+        return [
+            TimeStampSection::make(),
+            Section::make([
+                Select::make(Project::CLIENT_ID)
+                    ->relationship('client', 'name')
+                    ->required(),
+                DatePicker::make(Project::DATE)
+                    ->default(now())
+                    ->required(),
+            ]),
+        ];
     }
 
     public static function getFormFieldsSchema(): array
     {
         return [
-            Group::make([
-                TextInput::make(Project::TITLE)
-                    ->required(),
-                DatePicker::make(Project::DATE)
-                    ->default(now())
-                    ->required(),
-                Select::make(Project::CLIENT_ID)
-                    ->relationship('client', 'name')
-                    ->required(),
-            ]),
+
         ];
     }
 

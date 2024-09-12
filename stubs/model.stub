@@ -15,19 +15,11 @@ final class {{ class }} extends Model
     use CanGetNamesStatically;
     use HasFactory;
 
-     //region SCOPES
 
-    //endregion
 
-    //region RELATIONS
 
-    //endregion
 
-    //region ATTRIBUTES
 
-    //endregion
 
-    //region FUNCTIONS
 
-    //endregion
 }

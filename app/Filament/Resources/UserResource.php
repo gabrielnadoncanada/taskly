@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Enums\Language;
 use App\Filament\AbstractResource;
-use App\Filament\Components\TimeStampSection;
 use App\Filament\Fields\PhoneInput;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Tables\Actions\SoftDeleteAction;
@@ -12,9 +11,7 @@ use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Tables;
 use Filament\Tables\Actions\ViewAction;
@@ -36,26 +33,18 @@ class UserResource extends AbstractResource implements HasShieldPermissions
 
     protected static ?string $tenantOwnershipRelationshipName = 'organizations';
 
-    public static function form(Form $form): Form
+    public static function leftColumn(): array
     {
-        return $form
-            ->schema([
-                Group::make()
-                    ->schema([
-                        Section::make()
-                            ->schema(static::getFormFieldsSchema())
-                            ->columns()
-                            ->columnSpan(1),
-                        Section::make(__('filament.sections.password'))
-                            ->collapsible()
-                            ->collapsed()
-
-                            ->schema(static::getPasswordFormComponent()),
-                    ])->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
-                TimeStampSection::make()
-                    ->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
+        return [
+            Section::make()
+                ->schema(static::getFormFieldsSchema())
+                ->columns()
+                ->columnSpan(1),
+            Section::make(__('filament.sections.password'))
+                ->collapsible()
+                ->collapsed()
+                ->schema(static::getPasswordFormComponent()),
+        ];
     }
 
     public static function table(Table $table): Table

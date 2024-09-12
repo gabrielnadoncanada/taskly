@@ -13,7 +13,6 @@ use App\Models\Supplier;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -29,19 +28,20 @@ class SupplierResource extends AbstractResource
 
     protected static ?int $navigationSort = 10;
 
-    public static function form(Form $form): Form
+    protected static function leftColumn(): array
     {
-        return $form
-            ->schema([
-                Section::make()
+        return [
+            Section::make(self::getFormFieldsSchema()),
 
-                    ->schema(static::getFormFieldsSchema())
-                    ->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
-                TimeStampSection::make()
-                    ->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
+        ];
+    }
 
+    protected static function rightColumn(): array
+    {
+        return [
+            TimeStampSection::make(),
+
+        ];
     }
 
     public static function getFormFieldsSchema(): array

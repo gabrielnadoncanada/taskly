@@ -10,11 +10,9 @@ use App\Filament\Resources\ClientResource\RelationManagers\AddressesRelationMana
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\Client;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
@@ -32,23 +30,19 @@ class ClientResource extends AbstractResource
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    protected static function leftColumn(): array
     {
-        return $form
-            ->schema([
-                Group::make()
-                    ->schema([
-                        Section::make()
-                            ->columnSpan(1)
-                            ->columns()
-                            ->schema(static::getDetailsSchema()),
-                    ])
-                    ->columnSpan(['lg' => fn ($record) => $record === null ? 3 : 2]),
+        return [
+            Section::make(self::getDetailsSchema()),
+        ];
+    }
 
-                TimeStampSection::make()
-                    ->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
+    protected static function rightColumn(): array
+    {
+        return [
+            TimeStampSection::make(),
+
+        ];
     }
 
     public static function table(Table $table): Table

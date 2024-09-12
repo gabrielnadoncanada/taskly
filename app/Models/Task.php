@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ScopedBy([TenantScope::class])]
 class Task extends Model
 {
-    use CanGetNamesStatically, HasFactory, SoftDeletes, AssignTenant;
+    use AssignTenant, CanGetNamesStatically, HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
@@ -26,14 +26,16 @@ class Task extends Model
     ];
 
     public const TITLE = 'title';
+
     public const PROJECT_ID = 'project_id';
 
     public const DESCRIPTION = 'description';
+
     public const ALL_DAY = 'all_day';
 
     public const DATE = 'date';
-    public const END_DATE = 'end_date';
 
+    public const END_DATE = 'end_date';
 
     public const ORDER = 'order';
 
@@ -44,9 +46,8 @@ class Task extends Model
     public const STATUS = 'status';
 
     public const ORGANIZATION_ID = 'organization_id';
+
     public const PARENT_TASK_ID = 'parent_task_id';
-
-
 
     public function project()
     {

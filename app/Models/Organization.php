@@ -32,12 +32,6 @@ class Organization extends Model implements HasName
 
     public const EMAIL = 'email';
 
-    //region SCOPES
-
-    //endregion
-
-    //region RELATIONS
-
     public function morphAddresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');

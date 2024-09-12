@@ -5,7 +5,6 @@ namespace App\Enums;
 use App\Enums\Traits\HasRandomEnum;
 use App\Enums\Traits\HasTranslatableLabel;
 use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
 enum TaskStatus: string implements HasColor, HasLabel

@@ -36,6 +36,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
     public const LANGUAGE = 'language';
 
     public const PHONE = 'phone';
+
     public const NAME = 'name';
 
     public const EMAIL = 'email';
@@ -45,7 +46,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
     public const REMEMBER_TOKEN = 'remember_token';
 
     public const EMAIL_VERIFIED_AT = 'email_verified_at';
-    //endregion
 
     protected $hidden = [
         self::PASSWORD,
@@ -83,7 +83,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
         return true;
     }
 
-    //region SCOPES
     public function getTenants(Panel $panel): Collection
     {
         if ($this->hasRole('Super Administrateur')) {
@@ -98,7 +97,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
         return $this->organizations()->whereKey($tenant)->exists() ||
             $this->hasRole('Super Administrateur');
     }
-    //endregion
 
     public function tasks()
     {
@@ -113,7 +111,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
             ->withPivot('action_required', 'scheduled_date')
             ->withTimestamps();
     }
-    //region RELATIONS
 
     public function organizations(): BelongsToMany
     {

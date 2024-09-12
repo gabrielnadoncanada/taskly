@@ -58,7 +58,7 @@ class AppPanelProvider extends PanelProvider
                 FilamentFullCalendarPlugin::make()
                     ->selectable()
                     ->editable()
-                ->plugins(['dayGrid', 'timeGrid', 'list','interaction']),
+                    ->plugins(['dayGrid', 'timeGrid', 'list', 'interaction']),
 
             ])
             ->widgets([
