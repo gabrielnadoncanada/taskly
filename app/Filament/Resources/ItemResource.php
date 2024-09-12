@@ -63,15 +63,7 @@ class ItemResource extends AbstractResource
                         ->suffix(fn () => Filament::getTenant() ? Filament::getTenant()->getMeasurementSystemSuffix() : 'kg'),
                 ]),
 
-            Section::make('Images')
-                ->schema([
-                    FileUpload::make('media')
-                        ->image()
-                        ->multiple()
-                        ->maxFiles(5)
-                        ->hiddenLabel(),
-                ])
-                ->collapsible(),
+
 
         ];
     }
@@ -79,15 +71,25 @@ class ItemResource extends AbstractResource
     protected static function rightColumn(): array
     {
         return [
-            Select::make(Item::CATEGORY_ID)
-                ->columnSpanFull()
-                ->searchable()
-                ->live()
-                ->preload()
-                ->editOptionForm(CategoryResource::getFormFieldsSchema())
-                ->createOptionForm(CategoryResource::getFormFieldsSchema())
-                ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
-                ->relationship(name: 'category', titleAttribute: Category::TITLE),
+            Section::make()
+                ->schema([
+                    Select::make(Item::CATEGORY_ID)
+                        ->columnSpanFull()
+                        ->searchable()
+                        ->live()
+                        ->preload()
+                        ->editOptionForm(CategoryResource::getFormFieldsSchema())
+                        ->createOptionForm(CategoryResource::getFormFieldsSchema())
+                        ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->{Category::TITLE})
+                        ->relationship(name: 'category', titleAttribute: Category::TITLE),
+                    FileUpload::make('media')
+                        ->image()
+                        ->multiple()
+                        ->maxFiles(5)
+                        ,
+                ])
+              ,
+
         ];
     }
 
