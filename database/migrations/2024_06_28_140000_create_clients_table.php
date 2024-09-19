@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->text('note')->nullable();
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
-            $table->unique(['name', 'organization_id']);
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
+            $table->unique(['name', config('filament-tenant.relation_foreign_key')]);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Filament\Tables\Actions\SoftDeleteAction as TableSoftDeleteAction;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\DetachAction as TableDetachAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
@@ -41,6 +43,10 @@ class FilamentServiceProvider extends ServiceProvider
 
                 return __("fields.$fieldName");
             });
+        });
+
+        CreateAction::configureUsing(function (CreateAction $action): void {
+            $action->modalWidth(MaxWidth::SixExtraLarge);
         });
 
         Column::configureUsing(function (Column $column): void {

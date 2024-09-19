@@ -8,21 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('organization_user', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('position');
+            $table->text('description')->nullable();
+            $table->decimal('salary', 10)->nullable();
+            $table->date('hired_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('organization_user');
     }
 };

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\AbstractResource;
-use App\Filament\Components\TimeStampSection;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
@@ -37,8 +36,6 @@ class CategoryResource extends AbstractResource
         ];
     }
 
-
-
     public static function getFormFieldsSchema(): array
     {
         return [
@@ -62,14 +59,9 @@ class CategoryResource extends AbstractResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make(Category::TITLE)
-                    ->searchable()
-                    ->sortable()
                     ->badge()
                     ->color(fn (Category $record) => Color::hex($record->color)),
-
-                Tables\Columns\TextColumn::make(Category::DESCRIPTION)
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make(Category::DESCRIPTION),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

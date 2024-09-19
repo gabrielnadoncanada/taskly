@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Traits\AssignTenant;
 use App\Traits\CanGetNamesStatically;
+use Devlense\FilamentTenant\Concerns\MultiTenancy;
+use Devlense\FilamentTenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Squire\Models\Region;
 
 class Address extends Model
 {
-    use AssignTenant, CanGetNamesStatically;
+    use CanGetNamesStatically, Multitenancy;
     use HasFactory;
     use SoftDeletes;
 
@@ -64,9 +65,9 @@ class Address extends Model
         );
     }
 
-    public function organization(): BelongsTo
+    public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Tenant::class);
     }
 
     /** @return Attribute<string, never> */

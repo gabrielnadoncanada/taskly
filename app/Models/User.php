@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use App\Enums\Language;
 use App\Traits\CanGetNamesStatically;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Devlense\FilamentTenant\Concerns\Multitenancy;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -13,15 +14,16 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, HasName, HasTenants
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, HasTenants
 {
-    use CanGetNamesStatically, HasFactory, HasPanelShield,HasRoles, Notifiable, SoftDeletes;
+    use CanGetNamesStatically, HasFactory, HasPanelShield, HasRoles, Notifiable, SoftDeletes;
 
     public const ID = 'id';
 
@@ -29,11 +31,13 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
 
     public const LAST_NAME = 'last_name';
 
-
     public const NOTE = 'note';
 
+    public const RELATION_EMPLOYEE = 'employee';
 
     public const PHONE = 'phone';
+
+    public const TENANT_ID = 'tenant_id';
 
     public const NAME = 'name';
 
@@ -62,6 +66,11 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
         ];
     }
 
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return null;
+    }
+
     public function getFilamentName(): string
     {
         return "$this->first_name $this->last_name";
@@ -87,15 +96,15 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
     public function getTenants(Panel $panel): Collection
     {
         if ($this->hasRole('Super Administrateur')) {
-            return Organization::all();
+            return Tenant::all();
         }
 
-        return $this->organizations;
+        return $this->tenants;
     }
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->organizations()->whereKey($tenant)->exists() ||
+        return $this->tenants()->whereKey($tenant)->exists() ||
             $this->hasRole('Super Administrateur');
     }
 
@@ -111,7 +120,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
             ->withTimestamps();
     }
 
-    // Tâches où l'utilisateur doit entreprendre une action
     public function actionTasks()
     {
         return $this->belongsToMany(Task::class, 'task_action_user')
@@ -119,8 +127,13 @@ class User extends Authenticatable implements FilamentUser, HasName, HasTenants
             ->withTimestamps();
     }
 
-    public function organizations(): BelongsToMany
+    public function tenants(): BelongsToMany
     {
-        return $this->belongsToMany(Organization::class);
+        return $this->belongsToMany(Tenant::class);
+    }
+
+    public function employee(): HasOne
+    {
+        return $this->hasOne(Employee::class, Employee::USER_ID, self::ID);
     }
 }

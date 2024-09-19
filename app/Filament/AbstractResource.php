@@ -2,7 +2,6 @@
 
 namespace App\Filament;
 
-use App\Filament\Components\TimeStampSection;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,16 +18,7 @@ abstract class AbstractResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Group::make()
-                    ->schema(static::leftColumn())
-                    ->columnSpan(['lg' => fn($record) => static::leftColumnSpan($record)]),
-                Group::make()
-                    ->schema(static::rightColumn())
-                    ->columnSpan(['lg' => 1]),
-            ])
-            ->columns(3);
+        return $form->schema(static::getFormSchema())->columns(1);
     }
 
     public static function leftColumnSpan(?Model $record): int
@@ -38,7 +28,21 @@ abstract class AbstractResource extends Resource
 
     private static function hasRightColumn(): bool
     {
-        return !empty(static::rightColumn());
+        return ! empty(static::rightColumn());
+    }
+
+    public static function getFormSchema(): array
+    {
+        return [
+            Group::make([
+                Group::make()
+                    ->schema(static::leftColumn())
+                    ->columnSpan(['lg' => fn ($record) => static::leftColumnSpan($record)]),
+                Group::make()
+                    ->schema(static::rightColumn())
+                    ->columnSpan(['lg' => 1]),
+            ])->columns(3),
+        ];
     }
 
     abstract protected static function leftColumn(): array;
@@ -52,12 +56,12 @@ abstract class AbstractResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('filament.models.' . parent::getModelLabel());
+        return __('filament.models.'.parent::getModelLabel());
     }
 
     public static function getRecordTitle(?Model $record): string|Htmlable|null
     {
-        if (!static::$customRecordTitleAttribute) {
+        if (! static::$customRecordTitleAttribute) {
             return parent::getRecordTitle($record);
         }
 

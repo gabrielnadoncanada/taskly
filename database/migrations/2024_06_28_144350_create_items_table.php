@@ -14,10 +14,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('weight')->nullable();
             $table->string('media')->nullable();
-            $table->integer('default_price')->nullable();
+            $table->decimal('default_price', 10)->nullable();
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('sku')->nullable();
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

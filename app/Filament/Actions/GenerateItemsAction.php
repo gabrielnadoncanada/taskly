@@ -49,7 +49,7 @@ class GenerateItemsAction extends CreateAction
         $customerId = $livewire->ownerRecord->{$model::CUSTOMER_ID};
 
         return array_merge($data, [
-            $model::ORGANIZATION_ID => $organizationId,
+            $model::TENANT_ID => $organizationId,
             $model::RECEIPT_ID => $receiptId,
             $model::CUSTOMER_ID => $customerId,
             $model::ITEM_NUMBER => $model::generateItemNumber($organizationId) - 1,
@@ -115,7 +115,7 @@ class GenerateItemsAction extends CreateAction
                         name: 'localization',
                         titleAttribute: 'id',
                         modifyQueryUsing: fn (Builder $query) => $query->whereHas('warehouse', function ($query) {
-                            $query->where('organization_id', filament()->getTenant()->id);
+                            $query->where('tenant_id', filament()->getTenant()->id);
                         })
                     )
                     ->getOptionLabelFromRecordUsing(fn (Model $record) => $record->{Localization::DISPLAY_LOCALIZATION_NUMBER})

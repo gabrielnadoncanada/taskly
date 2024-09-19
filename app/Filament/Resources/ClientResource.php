@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\AbstractResource;
-use App\Filament\Components\TimeStampSection;
 use App\Filament\Fields\PhoneInput;
 use App\Filament\Resources\ClientResource\Pages;
 use App\Filament\Resources\ClientResource\RelationManagers\AddressesRelationManager;
@@ -18,7 +17,6 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Squire\Models\Country;
 
 class ClientResource extends AbstractResource
 {
@@ -37,20 +35,32 @@ class ClientResource extends AbstractResource
         ];
     }
 
-
+    public static function getDetailsSchema(): array
+    {
+        return [
+            TextInput::make(Client::NAME)
+                ->columnSpanFull()
+                ->required(),
+            TextInput::make(Client::EMAIL)
+                ->email(),
+            PhoneInput::make(Client::PHONE),
+            Textarea::make(Client::NOTE)
+                ->rows(5)
+                ->columnSpanFull()
+                ->columnSpanFull(),
+        ];
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make(Client::NAME)
-                ->searchable()
+
                     ->tooltip(fn ($record): string => $record->{Client::NOTE} ?? ''),
-                Tables\Columns\TextColumn::make(Client::EMAIL)
-                    ->sortable(),
+                Tables\Columns\TextColumn::make(Client::EMAIL),
                 Tables\Columns\TextColumn::make(Client::PHONE)
-                    ->searchable()
-                    ->sortable(),
+
 
             ])
             ->filters([
@@ -82,22 +92,6 @@ class ClientResource extends AbstractResource
             'index' => Pages\ListClients::route('/'),
             'create' => Pages\CreateClient::route('/create'),
             'edit' => Pages\EditClient::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getDetailsSchema(): array
-    {
-        return [
-            TextInput::make(Client::NAME)
-                ->columnSpanFull()
-                ->required(),
-            TextInput::make(Client::EMAIL)
-                ->email(),
-            PhoneInput::make(Client::PHONE),
-            Textarea::make(Client::NOTE)
-                ->rows(5)
-                ->columnSpanFull()
-                ->columnSpanFull(),
         ];
     }
 }

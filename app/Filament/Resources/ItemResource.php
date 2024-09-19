@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\AbstractResource;
-use App\Filament\Components\TimeStampSection;
 use App\Filament\Fields\DecimalInput;
 use App\Filament\Resources\ItemResource\Pages\CreateItem;
 use App\Filament\Resources\ItemResource\Pages\EditItem;
@@ -20,6 +19,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Colors\Color;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteAction;
@@ -54,16 +54,16 @@ class ItemResource extends AbstractResource
                 ->schema([
                     TextInput::make(Item::TITLE)->required()->columnSpanFull(),
                     RichEditor::make(Item::DESCRIPTION)->columnSpanFull(),
-                    DecimalInput::make(Item::DEFAULT_PRICE),
                     TextInput::make(Item::SKU)
+                        ->columnSpanFull()
                         ->unique(Item::class, Item::SKU, ignoreRecord: true),
+                    DecimalInput::make(Item::DEFAULT_PRICE),
+
                     TextInput::make(Item::WEIGHT)
                         ->numeric()
-                        ->columnSpanFull()
+
                         ->suffix(fn () => Filament::getTenant() ? Filament::getTenant()->getMeasurementSystemSuffix() : 'kg'),
                 ]),
-
-
 
         ];
     }
@@ -85,10 +85,8 @@ class ItemResource extends AbstractResource
                     FileUpload::make('media')
                         ->image()
                         ->multiple()
-                        ->maxFiles(5)
-                        ,
-                ])
-              ,
+                        ->maxFiles(5),
+                ]),
 
         ];
     }
@@ -102,10 +100,13 @@ class ItemResource extends AbstractResource
                 TrashedFilter::make(),
             ])
             ->actions([
-                EditAction::make(),
-                SoftDeleteAction::make(),
-                ForceDeleteAction::make(),
-                RestoreAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                    SoftDeleteAction::make(),
+                    ForceDeleteAction::make(),
+                    RestoreAction::make(),
+                ]),
+
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -123,37 +124,11 @@ class ItemResource extends AbstractResource
                 ->circular(),
 
             TextColumn::make(Item::TITLE)
-                ->tooltip(fn ($record): string => $record->description ?? '')
-                ->searchable(),
+                ->tooltip(fn ($record): string => $record->description ?? ''),
+            EllipsisTextColumn::make(Item::SKU),
             TextColumn::make('category.title')
-                ->searchable()
-                ->sortable()
                 ->badge()
                 ->color(fn (Item $record) => Color::hex($record->category->color)),
-            EllipsisTextColumn::make(Item::SKU)
-                ->searchable(),
-            TextColumn::make(Item::DEFAULT_PRICE)
-                ->searchable()
-                ->sortable()
-                ->formatStateUsing(fn (Item $record) => $record->{Item::DEFAULT_PRICE}.' '.($record->organization ? $record->organization->getCurrencySymbol() : '$')),
-
-            TextColumn::make('suppliers.title')
-                ->badge()
-                ->searchable(),
-
-        ];
-    }
-
-    public static function getFormSchema(): array
-    {
-        return [
-
-        ];
-    }
-
-    public static function getFormExtraSchema(): array
-    {
-        return [
 
         ];
     }

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained();
             $table->date('date')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
             $table->string('status')->default('Pending');
             $table->softDeletes();
             $table->timestamps();

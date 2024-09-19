@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7243dcf7c7a70621fcdde559a77f5cc",
+    "content-hash": "6b081bdccefd5ea425e58109ae79489e",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -687,6 +687,87 @@
                 }
             ],
             "time": "2024-05-06T09:10:03+00:00"
+        },
+        {
+            "name": "devlense/filament-tenant",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gabrielnadoncanada/filament-tenant.git",
+                "reference": "efc13bcfe2efbe9c5443f94b60a79c7bc3e48dac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gabrielnadoncanada/filament-tenant/zipball/efc13bcfe2efbe9c5443f94b60a79c7bc3e48dac",
+                "reference": "efc13bcfe2efbe9c5443f94b60a79c7bc3e48dac",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "mbezhanov/faker-provider-collection": "^2.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.9",
+                "nunomaduro/larastan": "^2.0.1",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.1",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Devlense\\FilamentTenant\\FilamentTenantServiceProvider"
+                    ],
+                    "aliases": {
+                        "FilamentTenant": "Devlense\\FilamentTenant\\Facades\\FilamentTenant"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Devlense\\FilamentTenant\\": "src/",
+                    "Devlense\\FilamentTenant\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gabriel Nadon",
+                    "email": "gabrielnadoncanada@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package filament-tenant",
+            "homepage": "https://github.com/devlense/filament-tenant",
+            "keywords": [
+                "devlense",
+                "filament-tenant",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/devlense/filament-tenant/issues",
+                "source": "https://github.com/devlense/filament-tenant"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/devlense",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-09-19T15:56:25+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1841,6 +1922,82 @@
                 }
             ],
             "time": "2024-07-20T21:45:45+00:00"
+        },
+        {
+            "name": "guava/calendar",
+            "version": "1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GuavaCZ/calendar.git",
+                "reference": "337365b97a96d4b8cdea86ce55e9ac5bb9e57391"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GuavaCZ/calendar/zipball/337365b97a96d4b8cdea86ce55e9ac5bb9e57391",
+                "reference": "337365b97a96d4b8cdea86ce55e9ac5bb9e57391",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.2",
+                "illuminate/contracts": "^10.0|^11.0",
+                "php": "^8.1|^8.2",
+                "spatie/laravel-package-tools": "^1.14.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^7.8|^8.0",
+                "nunomaduro/larastan": "^2.0.1",
+                "orchestra/testbench": "^8.8|^9.0",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Guava\\Calendar\\CalendarServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Guava\\Calendar\\": "src/",
+                    "Guava\\Calendar\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lukas Frey",
+                    "email": "lukas.frey@guava.cz",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Adds support for vkurko/calendar to Filament PHP.",
+            "homepage": "https://github.com/GuavaCZ/calendar",
+            "keywords": [
+                "Guava",
+                "calendar",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/GuavaCZ/calendar/issues",
+                "source": "https://github.com/GuavaCZ/calendar/tree/1.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/GuavaCZ",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-08-23T11:31:54+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -13006,7 +13163,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "devlense/filament-tenant": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

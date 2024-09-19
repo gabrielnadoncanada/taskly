@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('status')->default(\App\Enums\TaskStatus::NOT_STARTED);
             $table->foreignId('project_id')->constrained();
             $table->foreign('parent_task_id')->references('id')->on('tasks');
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
 
             $table->softDeletes();
             $table->timestamps();

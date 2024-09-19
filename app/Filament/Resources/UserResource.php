@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\Language;
 use App\Filament\AbstractResource;
 use App\Filament\Fields\PhoneInput;
 use App\Filament\Resources\UserResource\Pages;
@@ -31,7 +30,7 @@ class UserResource extends AbstractResource implements HasShieldPermissions
 
     protected static ?string $tenantRelationshipName = 'users';
 
-    protected static ?string $tenantOwnershipRelationshipName = 'organizations';
+    protected static ?string $tenantOwnershipRelationshipName = 'tenants';
 
     public static function leftColumn(): array
     {
@@ -51,30 +50,16 @@ class UserResource extends AbstractResource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(User::FIRST_NAME)
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make(User::LAST_NAME)
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make(User::EMAIL)
-                    ->sortable()
-                    ->searchable(),
+                Tables\Columns\TextColumn::make(User::FIRST_NAME),
+                Tables\Columns\TextColumn::make(User::LAST_NAME),
+                Tables\Columns\TextColumn::make(User::EMAIL),
 
-                Tables\Columns\TextColumn::make(User::PHONE)
-                    ->sortable()
-                    ->searchable(),
+                Tables\Columns\TextColumn::make(User::PHONE),
                 Tables\Columns\TextColumn::make(User::EMAIL_VERIFIED_AT)
-                    ->dateTime()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make(User::CREATED_AT)
-                    ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make(User::UPDATED_AT)
-                    ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -109,7 +94,6 @@ class UserResource extends AbstractResource implements HasShieldPermissions
             PhoneInput::make(User::PHONE)
                 ->default(null),
 
-
             Forms\Components\Textarea::make(User::NOTE)
                 ->rows(4)
                 ->columnSpanFull(),
@@ -121,18 +105,18 @@ class UserResource extends AbstractResource implements HasShieldPermissions
         return [
             Forms\Components\TextInput::make(User::PASSWORD)
                 ->password()
-                ->required(fn (?User $record) => $record === null)
+                ->required(fn(?User $record) => $record === null)
                 ->rule(Password::default())
                 ->autocomplete('new-password')
-                ->dehydrated(fn ($state): bool => filled($state))
-                ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+                ->dehydrated(fn($state): bool => filled($state))
+                ->dehydrateStateUsing(fn($state): string => Hash::make($state))
                 ->live(debounce: 500)
                 ->same('passwordConfirmation'),
             Forms\Components\TextInput::make('passwordConfirmation')
                 ->label('Confirmation du mot de passe')
                 ->password()
                 ->required()
-                ->visible(fn (Get $get): bool => filled($get('password')))
+                ->visible(fn(Get $get): bool => filled($get('password')))
                 ->dehydrated(false),
         ];
     }

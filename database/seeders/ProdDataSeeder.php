@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Currency;
-use App\Enums\MeasurementSystem;
-use App\Models\Organization;
 use App\Models\User;
+use Devlense\FilamentTenant\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -14,13 +12,9 @@ use Spatie\Permission\Models\Role;
 
 class ProdDataSeeder extends Seeder
 {
-    private const ORGANIZATION_TITLE = 'Devactif';
+    private const TENANT_TITLE = 'Devactif';
 
-    private const ORGANIZATION_EMAIL = 'root@devactif.ca';
-
-    private const ORGANIZATION_CURRENCY = Currency::CAD;
-
-    private const ORGANIZATION_MEASUREMENT_SYSTEM = MeasurementSystem::METRIC;
+    private const TENANT_EMAIL = 'root@devactif.ca';
 
     private const ADMIN_NAME = 'Admin';
 
@@ -38,21 +32,19 @@ class ProdDataSeeder extends Seeder
 
         DB::transaction(function () {
             $this->seedRoles();
-            $this->seedBaseOrganization();
+            $this->seedBaseTenant();
             $this->seedAdmin();
         });
     }
 
     /**
-     * Seed the base organization.
+     * Seed the base TENANT.
      */
-    protected function seedBaseOrganization(): void
+    protected function seedBaseTenant(): void
     {
-        Organization::firstOrCreate(
-            [Organization::TITLE => self::ORGANIZATION_TITLE],
-            [Organization::EMAIL => self::ORGANIZATION_EMAIL,
-                Organization::CURRENCY => self::ORGANIZATION_CURRENCY,
-                Organization::MEASUREMENT_SYSTEM => self::ORGANIZATION_MEASUREMENT_SYSTEM]
+        Tenant::firstOrCreate(
+            [Tenant::TITLE => self::TENANT_TITLE],
+            [Tenant::EMAIL => self::TENANT_EMAIL]
         );
     }
 

@@ -19,7 +19,7 @@ return new class extends Migration
 
             $table->morphs('addressable');
             $table->timestamps();
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
 
             $table->softDeletes();
         });

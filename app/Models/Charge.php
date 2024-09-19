@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Traits\AssignTenant;
 use App\Traits\CanGetNamesStatically;
+use Devlense\FilamentTenant\Concerns\MultiTenancy;
+use Devlense\FilamentTenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Charge extends Model
 {
-    use AssignTenant, CanGetNamesStatically;
+    use CanGetNamesStatically, MultiTenancy;
     use HasFactory;
     use SoftDeletes;
 
@@ -29,8 +30,8 @@ class Charge extends Model
 
     public const STATUS = 'status';
 
-    public function organization(): BelongsTo
+    public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Tenant::class);
     }
 }

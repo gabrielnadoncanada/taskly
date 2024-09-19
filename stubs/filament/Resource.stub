@@ -28,12 +28,11 @@ class {{ resourceClass }} extends AbstractResource
 
     protected static ?int $navigationSort = 6;
 
-    public static function form(Form $form): Form
+    public static function leftColumn(): array
     {
-        return $form
-            ->schema([
-                {{ formSchema }}
-            ]);
+        return [
+        {{ formSchema }}
+        ];
     }
 
     public static function table(Table $table): Table

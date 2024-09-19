@@ -17,7 +17,7 @@ class ProjectFactory extends Factory
             Project::TITLE => $this->faker->company(),
             Project::DATE => $this->faker->dateTimeBetween('+1 months', '+5 months'),
             Project::DESCRIPTION => $this->faker->paragraph(),
-            Project::STATUS => ProjectStatus::NEW,
+            Project::STATUS => ProjectStatus::randomValue(),
         ];
     }
 }

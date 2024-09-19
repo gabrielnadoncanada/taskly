@@ -19,8 +19,8 @@ return [
 
     'ownership' => [
         'tenant' => [
-            'model' => App\Models\Organization::class,
-            'ownershipRelationship' => 'organizations',
+            'model' => App\Models\Tenant::class,
+            'ownershipRelationship' => 'tenants',
         ],
     ],
 

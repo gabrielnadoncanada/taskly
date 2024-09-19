@@ -3,14 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\AbstractResource;
-use App\Filament\Components\TimeStampSection;
 use App\Filament\Resources\ClientResource\RelationManagers\AddressesRelationManager;
 use App\Filament\Resources\SupplierResource\Pages;
 use App\Filament\Resources\SupplierResource\RelationManagers\ItemsRelationManager;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\Supplier;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables;
@@ -39,20 +37,15 @@ class SupplierResource extends AbstractResource
         ];
     }
 
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(Supplier::TITLE)
-                    ->searchable(),
-                Tables\Columns\TextColumn::make(Supplier::EMAIL)
-                    ->sortable(),
+                Tables\Columns\TextColumn::make(Supplier::TITLE),
+                Tables\Columns\TextColumn::make(Supplier::EMAIL),
                 Tables\Columns\TextColumn::make('address')
-                    ->getStateUsing(fn($record): ?string => Country::find($record->addresses->first()?->country)?->name ?? null),
-                Tables\Columns\TextColumn::make(Supplier::PHONE)
-                    ->searchable()
-                    ->sortable(),
+                    ->getStateUsing(fn ($record): ?string => Country::find($record->addresses->first()?->country)?->name ?? null),
+                Tables\Columns\TextColumn::make(Supplier::PHONE),
             ])
             ->filters([
                 TrashedFilter::make(),

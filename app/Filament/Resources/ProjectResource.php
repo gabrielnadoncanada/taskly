@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ProjectStatus;
-use App\Enums\TaskStatus;
 use App\Filament\AbstractResource;
-use App\Filament\Components\TimeStampSection;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers\TasksRelationManager;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
 use App\Models\Project;
-use App\Models\Task;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
@@ -37,6 +34,7 @@ class ProjectResource extends AbstractResource
         return [
             Section::make([
                 TextInput::make(Project::TITLE)
+                    ->columnSpanFull()
                     ->required(),
                 Select::make(Project::CLIENT_ID)
                     ->relationship('client', 'name')
@@ -44,8 +42,9 @@ class ProjectResource extends AbstractResource
                 DatePicker::make(Project::DATE)
                     ->default(now())
                     ->required(),
-                RichEditor::make(Project::DESCRIPTION),
-            ]),
+                RichEditor::make(Project::DESCRIPTION)
+                    ->columnSpanFull(),
+            ])->columns(),
         ];
     }
 
@@ -63,8 +62,7 @@ class ProjectResource extends AbstractResource
                         ->relationship('users')
                         ->options(User::all()->pluck('name', 'id'))
                         ->searchable(),
-                ])
-
+                ]),
 
         ];
     }
@@ -73,10 +71,12 @@ class ProjectResource extends AbstractResource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(Project::TITLE)
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('client.name')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make(Project::TITLE),
+
+                Tables\Columns\TextColumn::make('client.name'),
+                Tables\Columns\TextColumn::make(Project::DATE),
+                Tables\Columns\TextColumn::make(Project::STATUS)
+                    ->badge(),
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -96,7 +96,7 @@ class ProjectResource extends AbstractResource
     public static function getRelations(): array
     {
         return [
-            TasksRelationManager::class,
+            TasksRelationManager::class
         ];
     }
 

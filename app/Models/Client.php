@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\TenantScope;
 use App\Traits\CanGetNamesStatically;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Devlense\FilamentTenant\Concerns\MultiTenancy;
+use Devlense\FilamentTenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[ScopedBy([TenantScope::class])]
 class Client extends Model
 {
-    use CanGetNamesStatically, HasFactory, SoftDeletes;
+    use CanGetNamesStatically, HasFactory, MultiTenancy, SoftDeletes;
 
     protected $guarded = [];
 
@@ -26,24 +25,20 @@ class Client extends Model
 
     public const NOTE = 'note';
 
-    public const ORGANIZATION_ID = 'organization_id';
+    public const TENANT_ID = 'tenant_id';
 
     public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');
     }
 
-    public function organization(): BelongsTo
+    public function projects()
     {
-        return $this->belongsTo(Organization::class);
+        return $this->hasMany(Project::class);
     }
 
-    protected static function boot()
+    public function tenant(): BelongsTo
     {
-        parent::boot();
-        self::forceDeleted(function ($model) {
-            $model->addresses()->forceDelete();
-
-        });
+        return $this->belongsTo(Tenant::class);
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('color');
 
-            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
 

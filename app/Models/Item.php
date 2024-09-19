@@ -3,18 +3,17 @@
 namespace App\Models;
 
 use App\Enums\ItemStatus;
-use App\Models\Scopes\TenantScope;
 use App\Traits\CanGetNamesStatically;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Devlense\FilamentTenant\Concerns\MultiTenancy;
+use Devlense\FilamentTenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[ScopedBy([TenantScope::class])]
 class Item extends Model
 {
-    use CanGetNamesStatically, HasFactory, SoftDeletes;
+    use CanGetNamesStatically, HasFactory, MultiTenancy, SoftDeletes;
 
     protected $guarded = [];
 
@@ -39,12 +38,7 @@ class Item extends Model
 
     public const CATEGORY_ID = 'category_id';
 
-    public const ORGANIZATION_ID = 'organization_id';
-
-    public function organization(): BelongsTo
-    {
-        return $this->belongsTo(Organization::class);
-    }
+    public const TENANT_ID = 'tenant_id';
 
     public function category(): BelongsTo
     {
@@ -63,5 +57,10 @@ class Item extends Model
         return $this->belongsToMany(Task::class)
             ->withPivot('quantity')
             ->withTimestamps();
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 }

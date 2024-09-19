@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Enums\TaskStatus;
 use App\Filament\AbstractResource;
+use App\Filament\Fields\Subtasks;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Tables\Actions\SoftDeleteAction;
 use App\Filament\Tables\Actions\SoftDeleteBulkAction;
-use App\Filament\Tables\Columns\EllipsisTextColumn;
 use App\Models\Item;
 use App\Models\Project;
 use App\Models\Task;
@@ -16,14 +16,13 @@ use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Forms\Components\ViewField;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\EditAction;
@@ -42,16 +41,34 @@ class TaskResource extends AbstractResource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-
     protected static ?int $navigationSort = 6;
-
 
     public static function leftColumn(): array
     {
         return [
-            static::generalSection(),
-//            static::subTasksSection(),
-//            static::itemsSection(),
+            Section::make()
+                ->columns()
+                ->schema([
+                    TextInput::make(Task::TITLE)
+                        ->columnSpanFull()
+                        ->required(),
+                    Select::make(Task::PROJECT_ID)
+                        ->relationship('project')
+                        ->options(Project::all()->pluck(Project::TITLE, 'id'))
+                        ->editOptionForm(ProjectResource::getFormSchema())
+                        ->createOptionForm(ProjectResource::getFormSchema())
+                        ->required(),
+                    DatePicker::make(Task::DATE)
+                        ->default(now())
+                        ->required(),
+                    RichEditor::make(Task::DESCRIPTION)
+                        ->columnSpanFull(),
+//                    Subtasks::make('subtasks')
+//                        ->columnSpanFull(),
+                ]),
+
+                        static::subTasksSection(),
+            //            static::itemsSection(),
         ];
     }
 
@@ -75,29 +92,12 @@ class TaskResource extends AbstractResource
         ];
     }
 
-    public static function generalSection(): Section
-    {
-        return Section::make()
-            ->schema([
-                TextInput::make(Task::TITLE)
-                    ->required(),
-                Select::make(Task::PROJECT_ID)
-                    ->relationship('project')
-                    ->options(Project::all()->pluck(Project::TITLE, 'id'))
-                    ->required(),
-                DatePicker::make(Task::DATE)
-                    ->default(now())
-                    ->required(),
-                RichEditor::make(Task::DESCRIPTION),
-            ]);
-    }
-
     public static function subTasksSection(): Section
     {
         return Section::make('Sub Tasks')
             ->collapsible()
-            ->collapsed(fn($record) => !$record)
-            ->hidden(fn($record) => $record?->parent()->exists())
+            ->collapsed(fn ($record) => ! $record)
+            ->hidden(fn ($record) => $record?->parent()->exists())
             ->schema([
                 TableRepeater::make('children')
                     ->hiddenLabel()
@@ -106,7 +106,7 @@ class TaskResource extends AbstractResource
                             ->icon('heroicon-o-pencil-square')
                             ->url(function (array $arguments, Repeater $component, $record): ?string {
                                 $itemData = $component->getRawItemState($arguments['item']);
-                                if (!array_key_exists('id', $itemData)) {
+                                if (! array_key_exists('id', $itemData)) {
                                     return null;
                                 } else {
                                     $record = Task::find($itemData['id']);
@@ -140,7 +140,7 @@ class TaskResource extends AbstractResource
     public static function itemsSection(): Section
     {
         Section::make('Items')
-            ->collapsed(fn($record) => !$record)
+            ->collapsed(fn ($record) => ! $record)
             ->collapsible()
             ->schema([
                 TableRepeater::make('items')
@@ -165,25 +165,22 @@ class TaskResource extends AbstractResource
             ]);
     }
 
-
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(Task::TITLE)
-                    ->searchable(),
+                Tables\Columns\TextColumn::make(Task::TITLE),
+                Tables\Columns\TextColumn::make('project.title'),
+                Tables\Columns\TextColumn::make(Task::DATE)
+                  ,
                 Tables\Columns\TextColumn::make(Task::STATUS)
                     ->badge(),
-                Tables\Columns\TextColumn::make(Task::DATE)
-                    ->date('Y-m-d'),
+
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->headerActions([
 
-            ])
             ->actions([
                 EditAction::make()->modalWidth(MaxWidth::SevenExtraLarge),
                 SoftDeleteAction::make(),

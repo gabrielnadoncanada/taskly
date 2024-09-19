@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\TenantScope;
 use App\Traits\CanGetNamesStatically;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Devlense\FilamentTenant\Concerns\MultiTenancy;
+use Devlense\FilamentTenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[ScopedBy([TenantScope::class])]
 class Project extends Model
 {
-    use CanGetNamesStatically, HasFactory, SoftDeletes;
+    use CanGetNamesStatically, HasFactory, MultiTenancy, SoftDeletes;
 
     public const TITLE = 'title';
 
@@ -21,7 +20,7 @@ class Project extends Model
 
     public const DESCRIPTION = 'description';
 
-    public const ORGANIZATION_ID = 'organization_id';
+    public const TENANT_ID = 'tenant_id';
 
     public const STATUS = 'status';
 
@@ -45,8 +44,8 @@ class Project extends Model
             ->withTimestamps();
     }
 
-    public function organization(): BelongsTo
+    public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Tenant::class);
     }
 }
