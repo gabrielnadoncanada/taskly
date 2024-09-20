@@ -16,6 +16,8 @@ return new class extends Migration
             $table->decimal('salary', 10)->nullable();
             $table->date('hired_at')->nullable();
             $table->softDeletes();
+            $table->foreignId(config('filament-tenant.relation_foreign_key'))->nullable()->constrained()->onDelete('cascade');
+
             $table->timestamps();
         });
     }

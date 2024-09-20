@@ -45,7 +45,7 @@ class AppPanelProvider extends PanelProvider
 //            ->renderHook(PanelsRenderHook::BODY_START, fn (): View => view('filament.staging-banner'))
             ->renderHook(
                 PanelsRenderHook::BODY_END,
-                fn (): View => view('components.layouts.footer'),
+                fn(): View => view('components.layouts.footer'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -84,7 +84,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->unsavedChangesAlerts()
             ->databaseNotifications()
-            ->tenantMenu(fn () => auth()->user()->hasRole('Super Administrateur'))
+            ->tenantMenu(fn() => auth()->user()->hasRole('Super Administrateur'))
             ->authMiddleware([
                 Authenticate::class,
             ])

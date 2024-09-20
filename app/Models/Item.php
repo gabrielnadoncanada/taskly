@@ -22,6 +22,7 @@ class Item extends Model
         self::MEDIA => 'array',
     ];
 
+    public const ID = 'id';
     public const STATUS = 'status';
 
     public const TITLE = 'title';
